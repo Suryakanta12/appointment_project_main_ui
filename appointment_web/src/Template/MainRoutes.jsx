@@ -18,22 +18,22 @@ import BeautyTattooDetails from "./FrontWebsite/Views/AllAppointmentDetails/Beau
 import AdminDashboard from "./Dashboards/Views/AdminDashboards/AdminDashboard.jsx";
 
 
-import HostelAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HostelAdmin.jsx";
-import HospitalAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HospitalAdmin.jsx";
-import AddFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/AddFacility.jsx";
-import UpdateFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/UpdateFacility.jsx";
-import DeleteFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/DeleteFacility.jsx";
-import PreviewFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/PreviewFacility.jsx";
-import AddRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/AddRoom.jsx";
-import UpdateRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/UpdateRoom.jsx";
-import DeleteRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/DeleteRoom.jsx";
-import PreviewRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/PreviewRoom.jsx";
-import AddBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/AddBed.jsx";
-import UpdateBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/UpdateBed.jsx";
-import DeleteBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/DeleteBed.jsx";
-import PreviewBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/PreviewBed.jsx";
-import PreviewRequest from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CustomerRequests/PreviewRequest.jsx";
-import ApproveRequest from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CustomerRequests/ApproveRequest.jsx";
+// import HostelAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HostelAdmin.jsx";
+// import HospitalAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HospitalAdmin.jsx";
+// import AddFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/AddFacility.jsx";
+// import UpdateFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/UpdateFacility.jsx";
+// import DeleteFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/DeleteFacility.jsx";
+// import PreviewFacility from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CommonFacilities/PreviewFacility.jsx";
+// import AddRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/AddRoom.jsx";
+// import UpdateRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/UpdateRoom.jsx";
+// import DeleteRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/DeleteRoom.jsx";
+// import PreviewRoom from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/RoomManagement/PreviewRoom.jsx";
+// import AddBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/AddBed.jsx";
+// import UpdateBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/UpdateBed.jsx";
+// import DeleteBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/DeleteBed.jsx";
+// import PreviewBed from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/BedManagement/PreviewBed.jsx";
+// import PreviewRequest from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CustomerRequests/PreviewRequest.jsx";
+// import ApproveRequest from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/CustomerRequests/ApproveRequest.jsx";
 import HostelAdminDashboard from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/HostelAdminDashboard.jsx";
 
 var hist = createBrowserHistory();
@@ -71,13 +71,13 @@ export default function MainRoutes() {
           path="/BeautyTattooDetails"
           element={<BeautyTattooDetails />}
         />
+        <Route exact path="/AdminDashboard" element={<AdminDashboard />} />
         <Route
           exact
-          path="/AdminDashboard"
-          element={<AdminDashboard />}
+          path="/HostelAdminDashboard"
+          element={<HostelAdminDashboard />}
         />
-        <Route exact path="/HostelAdminDashboard" element={<HostelAdminDashboard/>} />
-      <Route exact path="/hospital-admin" element={<HospitalAdmin/>} />
+        {/* <Route exact path="/hospital-admin" element={<HospitalAdmin/>} /> 
       <Route exact path="/add-facility" element={<AddFacility/>} />
       <Route exact path="/update-facility" element={<UpdateFacility/>} />
       <Route exact path="/delete-facility" element={<DeleteFacility/>} />
@@ -91,9 +91,8 @@ export default function MainRoutes() {
       <Route exact path="/delete-bed" element={<DeleteBed/>} />
       <Route exact path="/preview-bed" element={<PreviewBed/>} />
       <Route exact path="/preview-request" element={<PreviewRequest/>} />
-      <Route exact path="/approve-request" element={<ApproveRequest/>} />
+      <Route exact path="/approve-request" element={<ApproveRequest/>} />*/}
       </Routes>
-      
     </Router>
   );
 }
