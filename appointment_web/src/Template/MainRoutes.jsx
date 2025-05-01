@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
+import ProtectedRoute from "Template/ProtectedRoute.jsx";
+import { AuthContext } from "ContextOrRedux/AuthContext.js";
 import Home from "./FrontWebsite/Views/Home/Home.jsx";
 import SignIn from "./FrontWebsite/Views/Auth/SignIn.jsx";
 import SignUp from "./FrontWebsite/Views/Auth/SignUp.jsx";
@@ -16,7 +18,6 @@ import GarageDetails from "./FrontWebsite/Views/AllAppointmentDetails/GarageDeta
 import ProfessionalServicesDetails from "./FrontWebsite/Views/AllAppointmentDetails/ProfessionalServicesDetails.jsx";
 import BeautyTattooDetails from "./FrontWebsite/Views/AllAppointmentDetails/BeautyTattooDetails.jsx";
 import AdminDashboard from "./Dashboards/Views/AdminDashboards/AdminDashboard.jsx";
-
 
 // import HostelAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HostelAdmin.jsx";
 // import HospitalAdmin from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/AdminManagement/HospitalAdmin.jsx";
@@ -38,9 +39,34 @@ import HostelAdminDashboard from "./Dashboards/Views/CoAdminDashboard/HostelAdmi
 
 var hist = createBrowserHistory();
 export default function MainRoutes() {
+  const context = useContext(AuthContext);
+  console.log("context", context.state);
   return (
     <Router>
       <Routes>
+        <Route
+          element={
+            <ProtectedRoute
+              isAllowed={
+                context.state &&
+                context.state.isAuthenticated &&
+                !!context.state.user
+              }
+              currentUser={
+                context.state &&
+                context.state.isAuthenticated &&
+                context.state.user
+              }
+            />
+          }
+        >
+          <Route exact path="/AdminDashboard" element={<AdminDashboard />} />
+          <Route
+            exact
+            path="/HostelAdminDashboard"
+            element={<HostelAdminDashboard />}
+          />
+        </Route>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/SignIn" element={<SignIn />} />
         <Route exact path="/SignUp" element={<SignUp />} />
@@ -71,12 +97,7 @@ export default function MainRoutes() {
           path="/BeautyTattooDetails"
           element={<BeautyTattooDetails />}
         />
-        <Route exact path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route
-          exact
-          path="/HostelAdminDashboard"
-          element={<HostelAdminDashboard />}
-        />
+
         {/* <Route exact path="/hospital-admin" element={<HospitalAdmin/>} /> 
       <Route exact path="/add-facility" element={<AddFacility/>} />
       <Route exact path="/update-facility" element={<UpdateFacility/>} />

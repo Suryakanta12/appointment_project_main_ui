@@ -11,6 +11,7 @@ import {
   IconButton,
   InputAdornment,
   FormControl,
+  CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -48,48 +49,55 @@ export default function SignIn() {
       Email: thisLogin.User_Email,
       Password: thisLogin.User_Password,
     };
-    postRecord(API_Login, loginObj).then((response) => {
-      console.log("Response", response);
-      if (response.status === "success") {
-        if (response) {
-          let result = response;
-          if (result.status === "success") {
-            setSnackOptions({
-              color: result.color,
-              message: result.message,
-            });
-            setSnackOpen(true);
-            var contextData = {
-              user: result.data.user_info,
-              permissions: result.data.user_permission,
-              token: result.data.access_token,
-            };
-            dispatch({ type: "LOGIN", payload: contextData });
-            // dispatch({ type: "LOGIN", payload: response.data });
-            // handleLoginRedirect(result.UserDetails);
+    postRecord(API_Login, loginObj)
+      .then((response) => {
+        if (response.status === "success") {
+          if (response) {
+            let result = response;
+            if (result.status === "success") {
+              setSnackOptions({
+                color: result.color,
+                message: result.message,
+              });
+              setSnackOpen(true);
+              var contextData = {
+                user: result.data.user_info,
+                permissions: result.data.user_permission,
+                token: result.data.access_token,
+              };
+              dispatch({ type: "LOGIN", payload: contextData });
+              navigate(response.data.default_page);
+            } else {
+              setSnackOptions({
+                color: result.color,
+                message: result.message,
+              });
+              setSnackOpen(true);
+            }
           } else {
             setSnackOptions({
-              color: result.color,
-              message: result.message,
+              color: "error",
+              message: response.data,
             });
             setSnackOpen(true);
           }
         } else {
           setSnackOptions({
             color: "error",
-            message: response.data,
+            message: response.statusText,
           });
           setSnackOpen(true);
         }
-      } else {
+        setLoading(false);
+      })
+      .catch((err) => {
         setSnackOptions({
           color: "error",
-          message: response.statusText,
+          message: err.response.data.detail,
         });
         setSnackOpen(true);
-      }
-      setLoading(false);
-    });
+        setLoading(false);
+      });
   };
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -234,6 +242,8 @@ export default function SignIn() {
               color="primary"
               size="large"
               type="submit"
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : null}
               sx={{
                 borderRadius: 2,
                 textTransform: "none",
