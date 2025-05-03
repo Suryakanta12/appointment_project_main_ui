@@ -40,7 +40,6 @@ import HostelAdminDashboard from "./Dashboards/Views/CoAdminDashboard/HostelAdmi
 var hist = createBrowserHistory();
 export default function MainRoutes() {
   const context = useContext(AuthContext);
-  console.log("context", context.state);
   return (
     <Router>
       <Routes>

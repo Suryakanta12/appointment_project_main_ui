@@ -2,8 +2,8 @@ import axios from "axios";
 const APIURL = process.env.APIURL;
 const APPSECRET = process.env.APPSECRET;
 const headers = {
-  // "Content-Type": "application/json; charset=utf-8",
-  "Content-Type": "application/json",
+  "Content-Type": "application/json; charset=utf-8",
+  // "Content-Type": "application/json",
 };
 const fomrHeader = { "Content-Type": "multipart/form-data" };
 
@@ -19,7 +19,7 @@ export const postRecord = (url, data) => {
       })
       .then((res) => resolve(res.data))
       .catch((err) => {
-       console.error("API POST error:", err.response?.data || err.message);
+        console.error("API POST error:", err.response?.data || err.message);
         reject(err);
       });
   });
@@ -93,24 +93,52 @@ export const handleResponse = (response) => {
     };
   }
 };
-export const getRecord = (url) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .get(APIURL + url, {
-        headers,
-      })
-      .then((res) => {
-        resolve(res);
-      })
-      .catch((err) => reject(err));
-  });
+
+
+export const getRecord = async (url) => {
+  try {
+    const response = await axios.get(`${APIURL}${url}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "security-key": APPSECRET, // ✅ Must match FastAPI expectation
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
+// export const getRecord = (url) => {
+//   return new Promise((resolve, reject) => {
+//     console.log("URL", APIURL + url);
+//     console.log("Header", headers);
+//     console.log("Secret Key", APPSECRET);
+//     axios
+//       .get(`${APIURL}${url}`, {
+//         headers: {
+//           "Content-Type": "application/json",
+//           accept: "application/json",
+//           "secret-key": APPSECRET,
+//         },
+//       })
+//       .then((res) => {
+//         console.log("Response", res);
+//         resolve(res);
+//       })
+//       .catch((err) => reject(err));
+//   });
+// };
 export const putRecord = (url, data) => {
   data.SECRET_KEY = APPSECRET;
   return new Promise((resolve, reject) => {
     axios
       .put(APIURL + url, data, {
-        headers,
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
+          "secret-key": APPSECRET,
+        },
       })
       .then((res) => {
         resolve(res);
