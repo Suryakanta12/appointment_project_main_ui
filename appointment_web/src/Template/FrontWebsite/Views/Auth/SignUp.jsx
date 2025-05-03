@@ -58,6 +58,7 @@ export default function SignUp() {
     City: "",
     Postal_Code: "",
     Address: "",
+    Brand_Name: "",
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
   };
   const navigate = useNavigate();
@@ -108,7 +109,6 @@ export default function SignUp() {
     let componentMounted = true;
     getRecord(API_Get_All_Bussiness_Type, {})
       .then((response) => {
-        console.log(response.data);
         if (response.status === "success") {
           setAllBussinessType(response.data);
         }
@@ -142,7 +142,7 @@ export default function SignUp() {
     }
   }, [thisRegistration.State]);
   const handleSubmit = () => {
-    console.log(thisRegistration);
+    // console.log(thisRegistration);
     postRecord(API_Register, thisRegistration)
       .then((response) => {
         let result = response;
@@ -158,7 +158,39 @@ export default function SignUp() {
             token: result.data.access_token,
           };
           dispatch({ type: "LOGIN", payload: contextData });
-          
+          // const userId = result.data.user_id;
+          // const userTypeId = result.data.user_type;
+          // const addedBy = userId;
+
+          // selectedBusinessTypes.forEach((typeId) => {
+          //   const businessTypeObj = allBussinessType.find(
+          //     (x) => x.Business_Type_Id === typeId,
+          //   );
+
+          //   const businessPayload = {
+          //     User_Id: userId,
+          //     User_Type_Id: userTypeId,
+          //     Business_Type_Id: typeId,
+          //     Business_Type_Name: businessTypeObj?.Business_Type_Name || "",
+          //     Brand_Name: thisRegistration.Brand_Name || "",
+          //     Business_Code: "", // generate later in backend if needed
+          //     Business_Status: "Pending",
+          //     Bussiness_Logo: "",
+          //     Bussiness_Banner: "",
+          //     Bussiness_Description: "",
+          //     Is_Active: "Y",
+          //     Added_By: addedBy,
+          //     Added_On: new Date().toISOString(),
+          //   };
+
+          //   postRecord(API_Add_Bussinessman, businessPayload)
+          //     .then((res) => {
+          //       console.log("Inserted:", res);
+          //     })
+          //     .catch((err) => {
+          //       console.error("Insert failed:", err);
+          //     });
+          // });
           navigate(response.data.default_page);
           setThisRegistration(initialState);
         } else {
@@ -180,12 +212,19 @@ export default function SignUp() {
         setLoading(false);
       });
   };
+
   const handleBusinessTypeChange = (event) => {
-    const { value, checked } = event.target;
+    const id = parseInt(event.target.value); // or use `Number()` if preferred
     setSelectedBusinessTypes((prev) =>
-      checked ? [...prev, value] : prev.filter((type) => type !== value),
+      event.target.checked ? [...prev, id] : prev.filter((item) => item !== id),
     );
+    // const { value, checked } = event.target;
+    // console.log("value----------", checked);
+    // setSelectedBusinessTypes((prev) =>
+    //   checked ? [...prev, value] : prev.filter((type) => type !== value),
+    // );
   };
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setThisRegistration({ ...thisRegistration, [name]: value });
@@ -428,12 +467,15 @@ export default function SignUp() {
             {thisRegistration &&
               Number(thisRegistration.User_Type_Id) === 2 && (
                 <>
-                  <TextField
+                  {/* <TextField
                     fullWidth
                     label="Brand Name"
                     variant="outlined"
                     margin="normal"
                     required
+                    name="Brand_Name"
+                    value={thisRegistration.Brand_Name}
+                    onChange={handleInputChange}
                   />
                   <FormControl component="fieldset" sx={{ mt: 2 }}>
                     <FormLabel component="legend">Business Type</FormLabel>
@@ -456,7 +498,7 @@ export default function SignUp() {
                           />
                         ))}
                     </FormGroup>
-                  </FormControl>
+                  </FormControl> */}
                   <TextField
                     select
                     fullWidth
