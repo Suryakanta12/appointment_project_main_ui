@@ -30,7 +30,12 @@ import {
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Snackbar from "SnackBar/Snackbar.jsx";
-import { postRecord, getRecord } from "services/services";
+import {
+  postRecord,
+  getRecord,
+  postMultipleRecords,
+  setAuthToken,
+} from "services/services";
 import { AuthContext } from "ContextOrRedux/AuthContext";
 import IndianStatesAndDistricts from "../../../../CommonComponents/IndianStatesAndDistricts.json";
 import {
@@ -38,10 +43,12 @@ import {
   onlyEmail,
   onlyNumbers,
   onlyPhoneNumber,
+  isValidPincode,
 } from "CommonMethods/Validatations";
 const API_Get_All_UserType = "api/v1/usertypes/all-usertypes";
 const API_Register = "api/v1/authrouter/register";
-const API_Add_Bussinessman = "/api/v1/businessmanuser/addbusinessmanusers";
+const API_Add_Bussinessman =
+  "api/v1/businessmanuser/addmultiplebusinessmanusers";
 const API_Get_All_Bussiness_Type = "api/v1/businesstype/allbusinesstypes";
 
 export default function SignUp() {
@@ -63,12 +70,14 @@ export default function SignUp() {
   };
   const navigate = useNavigate();
   const { dispatch } = useContext(AuthContext);
+  const context = useContext(AuthContext);
   const [thisRegistration, setThisRegistration] = useState(initialState);
   const [userTypes, setUserTypes] = useState([]);
   const [allBussinessType, setAllBussinessType] = useState([]);
   const [selectedBusinessTypes, setSelectedBusinessTypes] = useState([]);
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
+  const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(false);
@@ -130,6 +139,12 @@ export default function SignUp() {
     setStates(allStates);
   }, []);
 
+  useEffect(() => {
+    if (submitting) {
+      console.log(context.state);
+    }
+  }, [submitting, context.state]);
+
   // Load districts whenever state changes
   useEffect(() => {
     if (thisRegistration.State) {
@@ -141,76 +156,104 @@ export default function SignUp() {
       setDistricts([]);
     }
   }, [thisRegistration.State]);
-  const handleSubmit = () => {
-    // console.log(thisRegistration);
-    postRecord(API_Register, thisRegistration)
-      .then((response) => {
-        let result = response;
-        if (result.status === "success") {
-          setSnackOptions({
-            color: result.color,
-            message: result.message,
-          });
-          setSnackOpen(true);
-          var contextData = {
-            user: result.data.user_info,
-            permissions: result.data.user_permission,
-            token: result.data.access_token,
-          };
-          dispatch({ type: "LOGIN", payload: contextData });
-          // const userId = result.data.user_id;
-          // const userTypeId = result.data.user_type;
-          // const addedBy = userId;
 
-          // selectedBusinessTypes.forEach((typeId) => {
-          //   const businessTypeObj = allBussinessType.find(
-          //     (x) => x.Business_Type_Id === typeId,
-          //   );
+  const handleSubmit = async () => {
+    try {
+      setLoading(true);
+      if (submitting) return; // Prevent duplicate submit
+      setSubmitting(true);
 
-          //   const businessPayload = {
-          //     User_Id: userId,
-          //     User_Type_Id: userTypeId,
-          //     Business_Type_Id: typeId,
-          //     Business_Type_Name: businessTypeObj?.Business_Type_Name || "",
-          //     Brand_Name: thisRegistration.Brand_Name || "",
-          //     Business_Code: "", // generate later in backend if needed
-          //     Business_Status: "Pending",
-          //     Bussiness_Logo: "",
-          //     Bussiness_Banner: "",
-          //     Bussiness_Description: "",
-          //     Is_Active: "Y",
-          //     Added_By: addedBy,
-          //     Added_On: new Date().toISOString(),
-          //   };
+      // ✅ Step 1: Register User
+      const response = await postRecord(API_Register, thisRegistration);
+      console.log("API Response:", response); // Log the full response for debugging
 
-          //   postRecord(API_Add_Bussinessman, businessPayload)
-          //     .then((res) => {
-          //       console.log("Inserted:", res);
-          //     })
-          //     .catch((err) => {
-          //       console.error("Insert failed:", err);
-          //     });
-          // });
-          navigate(response.data.default_page);
-          setThisRegistration(initialState);
-        } else {
-          setSnackOptions({
-            color: "error",
-            message: err.response.data.detail,
-          });
-          setSnackOpen(true);
-        }
-
-        setLoading(false);
-      })
-      .catch((err) => {
+      if (response.status !== "success") {
         setSnackOptions({
           color: "error",
-          message: err.response.data.detail,
+          message: response.error || "Registration failed",
         });
         setSnackOpen(true);
-        setLoading(false);
+        return;
+      }
+
+      const result = response;
+
+      // ✅ Set token for future API requests (if needed globally)
+      const token = result.data?.access_token || "";
+      setAuthToken(token);
+
+      setSnackOptions({
+        color: result.color,
+        message: result.message,
       });
+      setSnackOpen(true);
+
+      // ✅ Save context safely
+      const contextData = {
+        user: result.data?.user_info || {},
+        permissions: result.data?.user_permission || [],
+        token,
+      };
+      dispatch({ type: "LOGIN", payload: contextData });
+
+      console.log("result.data-----", result.data);
+
+      // ✅ If user type is 2, add business
+      if (result.data.user_type_id === 2) {
+        const userId = result.data?.user_id;
+        const userTypeId = result.data?.user_type;
+        const addedBy = userId;
+
+        const businessPayload = selectedBusinessTypes.map((typeId) => {
+          const businessTypeObj = allBussinessType.find(
+            (x) => x.Business_Type_Id === typeId,
+          );
+
+          return {
+            User_Id: userId,
+            User_Type_Id: userTypeId,
+            Business_Type_Id: typeId,
+            Business_Type_Name: businessTypeObj?.Business_Type_Name || "",
+            Brand_Name: thisRegistration.Brand_Name || "",
+            Business_Code: "",
+            Business_Status: "Pending",
+            Bussiness_Logo: "",
+            Bussiness_Banner: "",
+            Bussiness_Description: "",
+            Is_Active: "Y",
+            Added_By: addedBy,
+            Added_On: new Date().toISOString(),
+          };
+        });
+
+        // ✅ Step 3: Submit Multiple Business Records
+        const businessResponse = await postMultipleRecords(
+          API_Add_Bussinessman,
+          businessPayload,
+          token,
+        );
+
+        if (businessResponse.status === "success") {
+          console.log("Business added successfully");
+        } else {
+          console.error("Failed to add businesses", businessResponse.error);
+        }
+      }
+
+      // ✅ Navigate after success
+      navigate(result.data?.default_page || "/");
+      setThisRegistration(initialState);
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setSnackOptions({
+        color: "error",
+        message: err.message || "An unexpected error occurred",
+      });
+      setSnackOpen(true);
+    } finally {
+      setLoading(false);
+      setSubmitting(false);
+    }
   };
 
   const handleBusinessTypeChange = (event) => {
@@ -467,7 +510,7 @@ export default function SignUp() {
             {thisRegistration &&
               Number(thisRegistration.User_Type_Id) === 2 && (
                 <>
-                  {/* <TextField
+                  <TextField
                     fullWidth
                     label="Brand Name"
                     variant="outlined"
@@ -498,7 +541,7 @@ export default function SignUp() {
                           />
                         ))}
                     </FormGroup>
-                  </FormControl> */}
+                  </FormControl>
                   <TextField
                     select
                     fullWidth
@@ -546,6 +589,7 @@ export default function SignUp() {
                     name="Postal_Code"
                     value={thisRegistration.Postal_Code}
                     onChange={handleInputChange}
+                    onInput={(e) => isValidPincode(e)}
                   />
                   <TextField
                     fullWidth

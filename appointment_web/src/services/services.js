@@ -94,7 +94,6 @@ export const handleResponse = (response) => {
   }
 };
 
-
 export const getRecord = async (url) => {
   try {
     const response = await axios.get(`${APIURL}${url}`, {
@@ -252,4 +251,72 @@ export const getRecordByParamsWithOutAuthAndHeaderWithOutUrlAndData = (
       })
       .catch((err) => reject(err));
   });
+};
+// export const postMultipleRecords = async (url, recordsArray, delayMs = 300) => {
+//   if (!Array.isArray(recordsArray)) {
+//     console.error("Expected array but got:", typeof recordsArray, recordsArray);
+//     throw new TypeError("recordsArray must be an array");
+//   }
+
+//   const results = [];
+//   const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+//   for (const record of recordsArray) {
+//     try {
+//       const response = await axios.post(`${APIURL}${url}`, record, {
+//         headers: {
+//           "Content-Type": "application/json",
+//           Accept: "application/json",
+//           "security-key": APPSECRET, // ✅ Must match FastAPI expectation
+//         },
+//       });
+//       results.push({ status: "success", data: response.data });
+//     } catch (error) {
+//       console.error(
+//         "Error submitting record:",
+//         error.response?.data || error.message,
+//       );
+//       results.push({
+//         status: "error",
+//         error: error.response?.data || error.message,
+//         record,
+//       });
+//     }
+
+//     if (delayMs > 0) await delay(delayMs);
+//   }
+
+//   return results;
+// };
+
+export const setAuthToken = (token) => {
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  } else {
+    delete axios.defaults.headers.common["Authorization"];
+  }
+};
+
+export const postMultipleRecords = async (url, dataArray, token = "") => {
+  try {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "security-key": APPSECRET,
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    const response = await axios.post(`${APIURL}${url}`, dataArray, {
+      headers,
+    });
+    return { status: "success", data: response.data };
+  } catch (error) {
+    return {
+      status: "error",
+      error: error.response?.data?.detail || error.message,
+    };
+  }
 };

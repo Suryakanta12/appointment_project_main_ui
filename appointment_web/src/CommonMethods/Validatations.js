@@ -33,3 +33,8 @@ export const onlyAlphanumeric = (text) => {
   var pattern = new RegExp(/^[a-zA-Z0-9\s]+$/);
   return pattern.test(text);
 };
+
+export const isValidPincode = (pincode) => {
+  var pattern = new RegExp(/^[0-9]{6}$/); // Regex for exactly 6 digits
+  return pattern.test(pincode);
+};
