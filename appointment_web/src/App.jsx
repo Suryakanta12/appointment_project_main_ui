@@ -27,7 +27,8 @@ export default function App(props) {
     token: null,
   };
   const [state, dispatch] = useReducer(reducer, initialState);
-  const authContextValue = useMemo(() => ({ state, dispatch }), [state]);
+  const [loading, setLoading] = useState(true);
+  // const authContextValue = useMemo(() => ({ state, dispatch }), [state]);
   /** State and Reducer for Theme Context */
   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
   const themeMode = useContext(ThemeContext);
@@ -46,7 +47,7 @@ export default function App(props) {
     }
     verifyAuth();
 
-    // setLoading(false);
+    setLoading(false);
     return () => {
       componentMounted = false;
     };
@@ -78,10 +79,16 @@ export default function App(props) {
   };
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <AuthContext.Provider value={authContextValue}>
+      <AuthContext.Provider
+        value={{
+          state,
+          dispatch,
+        }}
+      >
         <ThemeContext.Provider value={themeMode}>
           <CssBaseline />
-          <MainRoutes />
+          {/* <MainRoutes /> */}
+          {!loading && <MainRoutes />}
           {/* <MainApp verifyAuth={verifyAuth} /> */}
         </ThemeContext.Provider>
       </AuthContext.Provider>

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import ProtectedRoute from "Template/ProtectedRoute.jsx";
 import { AuthContext } from "ContextOrRedux/AuthContext.js";
-import Home from "./FrontWebsite/Views/Home/Home.jsx";
+import { default as Home } from "./FrontWebsite/Views/Home/Home.jsx";
 import SignIn from "./FrontWebsite/Views/Auth/SignIn.jsx";
 import SignUp from "./FrontWebsite/Views/Auth/SignUp.jsx";
 import About from "./FrontWebsite/Views/About/About.jsx";

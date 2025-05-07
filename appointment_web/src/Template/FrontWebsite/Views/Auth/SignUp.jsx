@@ -255,7 +255,28 @@ export default function SignUp() {
       setSubmitting(false);
     }
   };
-
+  // const handleSearch = () => {
+  //   fetch(
+  //     `https://api.postalpincode.in/pincode/${thisRegistration.Postal_Code}`,
+  //   )
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       if (data[0].Status === "Success") {
+  //         console.log(data[0].PostOffice);
+  //         // setPostOffices(data[0].PostOffice);
+  //         // setError("");
+  //       } else {
+  //         console.log("No records found.");
+  //         // setPostOffices([]);
+  //         // setError("No records found.");
+  //       }
+  //     })
+  //     .catch(() => {
+  //       console.log("An error occurred while fetching data.");
+  //       // setPostOffices([]);
+  //       // setError("An error occurred while fetching data.");
+  //     });
+  // };
   const handleBusinessTypeChange = (event) => {
     const id = parseInt(event.target.value); // or use `Number()` if preferred
     setSelectedBusinessTypes((prev) =>
@@ -270,6 +291,9 @@ export default function SignUp() {
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    if (name === "Postal_Code") {
+      if (!/^\d{0,6}$/.test(value)) return; // Only allow up to 6 digits
+    }
     setThisRegistration({ ...thisRegistration, [name]: value });
   };
   const handleClickShowPassword = () => {
@@ -589,8 +613,27 @@ export default function SignUp() {
                     name="Postal_Code"
                     value={thisRegistration.Postal_Code}
                     onChange={handleInputChange}
-                    onInput={(e) => isValidPincode(e)}
+                    inputProps={{
+                      inputMode: "numeric", // shows number pad on mobile
+                      pattern: "[0-9]*",
+                      // type: "number",
+                      maxLength: 6,
+                    }}
+                    // onInput={(e) => isValidPincode(e)}
                   />
+                  {/* <Button
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={handleSearch}
+                    // type="submit"
+                    // disabled={loading}
+                    // startIcon={loading ? <CircularProgress size={20} /> : null}
+                    sx={{ mt: 2 }}
+                  >
+                    Search
+                  </Button> */}
                   <TextField
                     fullWidth
                     label="Address"
