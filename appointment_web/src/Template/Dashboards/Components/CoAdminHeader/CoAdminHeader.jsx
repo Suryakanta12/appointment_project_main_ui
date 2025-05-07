@@ -18,6 +18,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -41,91 +43,91 @@ import GarageIcon from "@mui/icons-material/Garage";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShareIcon from '@mui/icons-material/Share';
-import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ShareIcon from "@mui/icons-material/Share";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 const drawerWidth = 300;
 const sidebarData = {
-    sections: [
-      {
-        name: "Hostels",
-        items: [
-          { name: "Manage Hostels Locations", url: "/ManageHostelsLocations" },
-          { name: "Manage Rooms", url: "/ManageRooms" },
-          { name: "Customer Management", url: "/CustomerManagement" },
-          { name: "Bookings", url: "/Bookings" },
-          { name: "Staff Management", url: "/StaffManagement" },
-          { name: "Billing", url: "/Billing" },
-          { name: "Food Catering", url: "/FoodCatering" },
-          { name: "Reports", url: "/Reports" },
-        ],
-        icon: <HotelIcon />,
-      },
-      {
-        name: "Hospitals",
-        items: [
-          { name: "Overview", url: "/HospitalOverview" },
-          { name: "Manage Doctors", url: "/ManageDoctors" },
-          { name: "Appointments", url: "/HospitalAppointments" },
-          { name: "Patient Management", url: "/PatientManagement" },
-          { name: "Billing", url: "/HospitalBilling" },
-          { name: "Reports", url: "/HospitalReports" },
-        ],
-        icon: <LocalHospitalIcon />,
-      },
-      {
-        name: "Garages",
-        items: [
-          { name: "Services Offered", url: "/GarageServices" },
-          { name: "Technician Management", url: "/TechnicianManagement" },
-          { name: "Customer Management", url: "/GarageCustomerManagement" },
-          { name: "Bookings", url: "/GarageBookings" },
-          { name: "Reports", url: "/GarageReports" },
-        ],
-        icon: <GarageIcon />,
-      },
-      {
-        name: "Beauty & Tattoo",
-        items: [
-          { name: "Artists", url: "/Artists" },
-          { name: "Appointments", url: "/TattooAppointments" },
-          { name: "Customer Profiles", url: "/TattooCustomerProfiles" },
-          { name: "Reports", url: "/TattooReports" },
-        ],
-        icon: <FaceRetouchingNaturalIcon />,
-      },
-      {
-        name: "Food Catering",
-        items: [
-          { name: "Menu Management", url: "/MenuManagement" },
-          { name: "Bookings", url: "/FoodCateringBookings" },
-          { name: "Reports", url: "/FoodCateringReports" },
-        ],
-        icon: <FlatwareIcon />,
-      },
-      {
-        name: "Fashion Design",
-        items: [
-          { name: "Designers", url: "/FashionDesigners" },
-          { name: "Orders", url: "/FashionOrders" },
-          { name: "Reports", url: "/FashionReports" },
-        ],
-        icon: <ContentCutIcon />,
-      },
-      {
-        name: "Professional Services",
-        items: [
-          { name: "Experts", url: "/Experts" },
-          { name: "Bookings", url: "/ProfessionalServiceBookings" },
-          { name: "Reports", url: "/ProfessionalServiceReports" },
-        ],
-        icon: <HomeRepairServiceIcon />,
-      },
-    ],
-  };
-  
-export default function CoAdminHeader () {
+  sections: [
+    {
+      name: "Hostels",
+      items: [
+        { name: "Manage Hostels Locations", url: "/ManageHostelsLocations" },
+        { name: "Manage Rooms", url: "/ManageRooms" },
+        { name: "Customer Management", url: "/CustomerManagement" },
+        { name: "Bookings", url: "/Bookings" },
+        { name: "Staff Management", url: "/StaffManagement" },
+        { name: "Billing", url: "/Billing" },
+        { name: "Food Catering", url: "/FoodCatering" },
+        { name: "Reports", url: "/Reports" },
+      ],
+      icon: <HotelIcon color="primary" />,
+    },
+    {
+      name: "Hospitals",
+      items: [
+        { name: "Overview", url: "/HospitalOverview" },
+        { name: "Manage Doctors", url: "/ManageDoctors" },
+        { name: "Appointments", url: "/HospitalAppointments" },
+        { name: "Patient Management", url: "/PatientManagement" },
+        { name: "Billing", url: "/HospitalBilling" },
+        { name: "Reports", url: "/HospitalReports" },
+      ],
+      icon: <LocalHospitalIcon color="primary" />,
+    },
+    {
+      name: "Garages",
+      items: [
+        { name: "Services Offered", url: "/GarageServices" },
+        { name: "Technician Management", url: "/TechnicianManagement" },
+        { name: "Customer Management", url: "/GarageCustomerManagement" },
+        { name: "Bookings", url: "/GarageBookings" },
+        { name: "Reports", url: "/GarageReports" },
+      ],
+      icon: <GarageIcon color="primary" />,
+    },
+    {
+      name: "Beauty & Tattoo",
+      items: [
+        { name: "Artists", url: "/Artists" },
+        { name: "Appointments", url: "/TattooAppointments" },
+        { name: "Customer Profiles", url: "/TattooCustomerProfiles" },
+        { name: "Reports", url: "/TattooReports" },
+      ],
+      icon: <FaceRetouchingNaturalIcon color="primary" />,
+    },
+    {
+      name: "Food Catering",
+      items: [
+        { name: "Menu Management", url: "/MenuManagement" },
+        { name: "Bookings", url: "/FoodCateringBookings" },
+        { name: "Reports", url: "/FoodCateringReports" },
+      ],
+      icon: <FlatwareIcon color="primary" />,
+    },
+    {
+      name: "Fashion Design",
+      items: [
+        { name: "Designers", url: "/FashionDesigners" },
+        { name: "Orders", url: "/FashionOrders" },
+        { name: "Reports", url: "/FashionReports" },
+      ],
+      icon: <ContentCutIcon color="primary" />,
+    },
+    {
+      name: "Professional Services",
+      items: [
+        { name: "Experts", url: "/Experts" },
+        { name: "Bookings", url: "/ProfessionalServiceBookings" },
+        { name: "Reports", url: "/ProfessionalServiceReports" },
+      ],
+      icon: <HomeRepairServiceIcon color="primary" />,
+    },
+  ],
+};
+
+export default function CoAdminHeader() {
   const theme = useTheme();
   const navigate = useNavigate();
   const themeMode = useContext(ThemeContext);
@@ -138,7 +140,7 @@ export default function CoAdminHeader () {
   const handleToggle = (sectionName) => {
     setSelectedService((prevState) => ({
       ...prevState,
-      [sectionName]:!prevState[sectionName]? !prevState[sectionName]:false,
+      [sectionName]: !prevState[sectionName] ? !prevState[sectionName] : false,
     }));
   };
   const handleProfileOpen = (event) => {
@@ -156,7 +158,7 @@ export default function CoAdminHeader () {
     setOpen(false);
   };
   const handleItemClick = (url) => {
-    navigate(url);  // Perform navigation to the given URL
+    navigate(url); // Perform navigation to the given URL
   };
   return (
     <React.Fragment>
@@ -192,7 +194,7 @@ export default function CoAdminHeader () {
             edge="start"
             sx={{ marginRight: 5, ...(open && { display: "none" }) }}
           >
-            <MenuIcon />
+            <MenuIcon color="primary" />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Logo
@@ -221,7 +223,7 @@ export default function CoAdminHeader () {
               color="inherit"
             >
               <Badge badgeContent={4} color="error">
-                <MailIcon />
+                <MailIcon color="primary" />
               </Badge>
             </IconButton>
             <IconButton
@@ -230,7 +232,7 @@ export default function CoAdminHeader () {
               color="inherit"
             >
               <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+                <NotificationsIcon color="primary" />
               </Badge>
             </IconButton>
             <Box sx={{ flexGrow: 0 }}>
@@ -246,7 +248,7 @@ export default function CoAdminHeader () {
                 //   aria-controls={openProfile ? 'account-menu' : undefined}
                 //   aria-expanded={openProfile ? 'true' : undefined}
               >
-                <AccountCircle />
+                <AccountCircle color="primary" />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
@@ -373,9 +375,9 @@ export default function CoAdminHeader () {
         >
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+              <ChevronRightIcon color="primary" />
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon color="primary" />
             )}
           </IconButton>
         </Box>
@@ -383,7 +385,7 @@ export default function CoAdminHeader () {
         <List>
           <ListItemButton>
             <ListItemIcon>
-              <DashboardIcon />
+              <DashboardIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
@@ -402,9 +404,9 @@ export default function CoAdminHeader () {
                 <ListItemIcon>{section.icon}</ListItemIcon>
                 <ListItemText primary={section.name} />
                 {selectedService[section.name] ? (
-                  <ExpandLess />
+                  <ArrowDropDownIcon color="primary" />
                 ) : (
-                  <ExpandMore />
+                  <ArrowRightIcon color="primary" />
                 )}
               </ListItemButton>
 
@@ -416,7 +418,11 @@ export default function CoAdminHeader () {
               >
                 <List component="div" disablePadding>
                   {section.items.map((item, index) => (
-                    <ListItemButton key={index} sx={{ paddingLeft: 4 }}  onClick={() => handleItemClick(item.url)}>
+                    <ListItemButton
+                      key={index}
+                      sx={{ paddingLeft: 4 }}
+                      onClick={() => handleItemClick(item.url)}
+                    >
                       <ListItemText primary={item.name} />
                     </ListItemButton>
                   ))}
@@ -443,7 +449,11 @@ export default function CoAdminHeader () {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <ShareIcon /> : <NewspaperIcon />}
+                  {index % 2 === 0 ? (
+                    <ShareIcon color="primary" />
+                  ) : (
+                    <NewspaperIcon color="primary" />
+                  )}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}
@@ -456,5 +466,4 @@ export default function CoAdminHeader () {
       </MuiDrawer>
     </React.Fragment>
   );
-};
-
+}

@@ -57,7 +57,7 @@ export default function HostelAdminDashboard() {
               Admin Dashboard
             </Typography>
             <Box display="flex" alignItems="center" gap={2}>
-              <Select
+              {/* <Select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 displayEmpty
@@ -69,7 +69,7 @@ export default function HostelAdminDashboard() {
                 <MenuItem value="Beauty & Tattoo">Beauty & Tattoo</MenuItem>
                 <MenuItem value="Food Catering">Food Catering</MenuItem>
                 <MenuItem value="Fashion Design">Fashion Design</MenuItem>
-              </Select>
+              </Select> */}
               <TextField
                 placeholder="Search"
                 size="small"
@@ -144,9 +144,8 @@ export default function HostelAdminDashboard() {
               </TableBody>
             </Table>
           </TableContainer> */}
-        <UserStayRequest/>
+          <UserStayRequest />
         </Box>
-
       </Box>
     </React.Fragment>
   );

@@ -18,6 +18,8 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -41,8 +43,8 @@ import GarageIcon from "@mui/icons-material/Garage";
 import HomeRepairServiceIcon from "@mui/icons-material/HomeRepairService";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import ShareIcon from '@mui/icons-material/Share';
-import NewspaperIcon from '@mui/icons-material/Newspaper';
+import ShareIcon from "@mui/icons-material/Share";
+import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 const drawerWidth = 300;
@@ -59,7 +61,7 @@ const sidebarData = {
         "Billing",
         "Reports",
       ],
-      icon: <HotelIcon />,
+      icon: <HotelIcon color="primary" />,
     },
     {
       name: "Hospitals",
@@ -71,7 +73,7 @@ const sidebarData = {
         "Billing",
         "Reports",
       ],
-      icon: <LocalHospitalIcon />,
+      icon: <LocalHospitalIcon color="primary" />,
     },
     {
       name: "Garages",
@@ -82,27 +84,27 @@ const sidebarData = {
         "Bookings",
         "Reports",
       ],
-      icon: <GarageIcon />,
+      icon: <GarageIcon color="primary" />,
     },
     {
       name: "Beauty & Tattoo",
       items: ["Artists", "Appointments", "Customer Profiles", "Reports"],
-      icon: <FaceRetouchingNaturalIcon />,
+      icon: <FaceRetouchingNaturalIcon color="primary" />,
     },
     {
       name: "Food Catering",
       items: ["Menu Management", "Bookings", "Reports"],
-      icon: <FlatwareIcon />,
+      icon: <FlatwareIcon color="primary" />,
     },
     {
       name: "Fashion Design",
       items: ["Designers", "Orders", "Reports"],
-      icon: <ContentCutIcon />,
+      icon: <ContentCutIcon color="primary" />,
     },
     {
       name: "Professional Services",
       items: ["Experts", "Bookings", "Reports"],
-      icon: <HomeRepairServiceIcon />,
+      icon: <HomeRepairServiceIcon color="primary" />,
     },
   ],
 };
@@ -118,7 +120,7 @@ const AdminHeader = () => {
   const handleToggle = (sectionName) => {
     setSelectedService((prevState) => ({
       ...prevState,
-      [sectionName]:!prevState[sectionName]? !prevState[sectionName]:false,
+      [sectionName]: !prevState[sectionName] ? !prevState[sectionName] : false,
     }));
   };
   const handleProfileOpen = (event) => {
@@ -170,7 +172,7 @@ const AdminHeader = () => {
             edge="start"
             sx={{ marginRight: 5, ...(open && { display: "none" }) }}
           >
-            <MenuIcon />
+            <MenuIcon color="primary" />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Logo
@@ -199,7 +201,7 @@ const AdminHeader = () => {
               color="inherit"
             >
               <Badge badgeContent={4} color="error">
-                <MailIcon />
+                <MailIcon color="primary" />
               </Badge>
             </IconButton>
             <IconButton
@@ -208,7 +210,7 @@ const AdminHeader = () => {
               color="inherit"
             >
               <Badge badgeContent={17} color="error">
-                <NotificationsIcon />
+                <NotificationsIcon color="primary" />
               </Badge>
             </IconButton>
             <Box sx={{ flexGrow: 0 }}>
@@ -224,7 +226,7 @@ const AdminHeader = () => {
                 //   aria-controls={openProfile ? 'account-menu' : undefined}
                 //   aria-expanded={openProfile ? 'true' : undefined}
               >
-                <AccountCircle />
+                <AccountCircle color="primary" />
               </IconButton>
               <Menu
                 anchorEl={anchorEl}
@@ -351,9 +353,9 @@ const AdminHeader = () => {
         >
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+              <ChevronRightIcon color="primary" />
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon color="primary" />
             )}
           </IconButton>
         </div>
@@ -361,7 +363,7 @@ const AdminHeader = () => {
         <List>
           <ListItemButton>
             <ListItemIcon>
-              <DashboardIcon />
+              <DashboardIcon color="primary" />
             </ListItemIcon>
             <ListItemText primary="Dashboard" />
           </ListItemButton>
@@ -380,9 +382,9 @@ const AdminHeader = () => {
                 <ListItemIcon>{section.icon}</ListItemIcon>
                 <ListItemText primary={section.name} />
                 {selectedService[section.name] ? (
-                  <ExpandLess />
+                  <ArrowDropDownIcon color="primary" />
                 ) : (
-                  <ExpandMore />
+                  <ArrowRightIcon color="primary" />
                 )}
               </ListItemButton>
 
@@ -421,7 +423,11 @@ const AdminHeader = () => {
                     justifyContent: "center",
                   }}
                 >
-                  {index % 2 === 0 ? <ShareIcon /> : <NewspaperIcon />}
+                  {index % 2 === 0 ? (
+                    <ShareIcon color="primary" />
+                  ) : (
+                    <NewspaperIcon color="primary" />
+                  )}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}
