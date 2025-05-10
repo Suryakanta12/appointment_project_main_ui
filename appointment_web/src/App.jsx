@@ -11,6 +11,8 @@ import React, {
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import CircularProgress from "@mui/material/CircularProgress";
+import { Box } from "@mui/material";
 /** App Route Component */
 /** Theming and Styling */
 import { darkTheme, lightTheme } from "theme.js";
@@ -24,6 +26,7 @@ export default function App(props) {
     isAuthenticated: false,
     user: null,
     permissions: null,
+    usertype: null,
     token: null,
   };
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -60,16 +63,21 @@ export default function App(props) {
       localStorage.getItem("permissions") &&
       decryptText(localStorage.getItem("permissions"));
     var permissions = accessbytes && JSON.parse(accessbytes);
+    var usertypebytes =
+      localStorage.getItem("usertype") &&
+      decryptText(localStorage.getItem("usertype"));
+    var usertype = JSON.parse(usertypebytes);
     var tokenbyte =
       localStorage.getItem("token") && localStorage.getItem("token");
     var token = tokenbyte;
-    if (user && permissions && token) {
+    if (user && permissions && usertype && token) {
       dispatch({
         type: "LOGIN",
         payload: {
           user,
           permissions,
           token,
+          usertype,
           // indentMode,
         },
       });
@@ -79,19 +87,33 @@ export default function App(props) {
   };
   return (
     <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-      <AuthContext.Provider
-        value={{
-          state,
-          dispatch,
-        }}
-      >
-        <ThemeContext.Provider value={themeMode}>
-          <CssBaseline />
-          {/* <MainRoutes /> */}
-          {!loading && <MainRoutes />}
-          {/* <MainApp verifyAuth={verifyAuth} /> */}
-        </ThemeContext.Provider>
-      </AuthContext.Provider>
+      {loading ? (
+        <Box
+          sx={{
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <AuthContext.Provider
+          value={{
+            state,
+            dispatch,
+          }}
+        >
+          <ThemeContext.Provider value={themeMode}>
+            <CssBaseline />
+            <MainRoutes />
+            {/* {!loading && <MainRoutes />} */}
+            {/* <MainApp verifyAuth={verifyAuth} /> */}
+          </ThemeContext.Provider>
+        </AuthContext.Provider>
+      )}
       {/* <CssBaseline />
       <MainRoutes /> */}
     </ThemeProvider>

@@ -16,7 +16,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Snackbar from "SnackBar/Snackbar.jsx";
-import { postRecord } from "services/services";
+import { authPostRecord } from "services/services";
 import { AuthContext } from "ContextOrRedux/AuthContext";
 import { onlyPassword, onlyEmail } from "CommonMethods/Validatations";
 const API_Login = "api/v1/authrouter/login";
@@ -49,7 +49,7 @@ export default function SignIn() {
       Email: thisLogin.User_Email,
       Password: thisLogin.User_Password,
     };
-    postRecord(API_Login, loginObj)
+    authPostRecord(API_Login, loginObj)
       .then((response) => {
         if (response.status === "success") {
           if (response) {
@@ -64,6 +64,7 @@ export default function SignIn() {
                 user: result.data.user_info,
                 permissions: result.data.user_permission,
                 token: result.data.access_token,
+                usertype: result.data.user_type,
               };
               dispatch({ type: "LOGIN", payload: contextData });
               navigate(response.data.default_page);

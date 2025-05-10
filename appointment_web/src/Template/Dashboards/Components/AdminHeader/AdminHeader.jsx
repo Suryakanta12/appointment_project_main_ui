@@ -45,6 +45,9 @@ import ContentCutIcon from "@mui/icons-material/ContentCut";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ShareIcon from "@mui/icons-material/Share";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
+import WorkIcon from "@mui/icons-material/Work";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 const drawerWidth = 300;
@@ -108,7 +111,41 @@ const sidebarData = {
     },
   ],
 };
-const AdminHeader = () => {
+const moduleData = {
+  sections: [
+    {
+      name: "User Modules",
+      items: [
+        { name: "User Types", url: "/UserTypes" },
+        { name: "Users", url: "/Users" },
+        { name: "Pages", url: "/Pages" },
+        { name: "User Permission", url: "/UserPermission" },
+        { name: "Logs", url: "/Logs" },
+      ],
+      icon: <AccountCircleIcon color="primary" />,
+    },
+    {
+      name: "Location Modules",
+      items: [
+        { name: "Location Master", url: "/LocationMaster" },
+        { name: "Location Active Pin code", url: "/LocationActivePinCode" },
+        { name: "Location User Address", url: "/LocationUserAddress" },
+      ],
+      icon: <MyLocationIcon color="primary" />,
+    },
+    {
+      name: "Bussiness Module",
+      items: [
+        { name: "Bussiness Man User", url: "/BussinessManUser" },
+        { name: "Bussiness Type", url: "/BussinessType" },
+        { name: "Bussiness Categories", url: "/Bussiness Categories" },
+      ],
+      icon: <WorkIcon color="primary" />,
+    },
+  ],
+};
+export default function AdminHeader() {
+  const navigate = useNavigate();
   const theme = useTheme();
   const themeMode = useContext(ThemeContext);
   const darkMode = themeMode.state.darkMode;
@@ -116,11 +153,18 @@ const AdminHeader = () => {
   const [open, setOpen] = React.useState(isMobile ? false : true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedService, setSelectedService] = useState({});
+  const [selectedModules, setSelectedModules] = useState({});
   const openProfile = Boolean(anchorEl);
   const handleToggle = (sectionName) => {
     setSelectedService((prevState) => ({
       ...prevState,
       [sectionName]: !prevState[sectionName] ? !prevState[sectionName] : false,
+    }));
+  };
+  const handleModules = (moduleName) => {
+    setSelectedModules((prevState) => ({
+      ...prevState,
+      [moduleName]: !prevState[moduleName] ? !prevState[moduleName] : false,
     }));
   };
   const handleProfileOpen = (event) => {
@@ -406,6 +450,47 @@ const AdminHeader = () => {
           ))}
         </List>
         <Divider />
+        {open && (
+          <Typography variant="body1" sx={{ px: 2, mt: 2 }}>
+            Modules
+          </Typography>
+        )}
+
+        {moduleData.sections.map((section) => (
+          <Box key={section.name}>
+            {/* Toggle for each section */}
+            <ListItemButton onClick={() => handleModules(section.name)}>
+              <ListItemIcon>{section.icon}</ListItemIcon>
+              <ListItemText primary={section.name} />
+              {selectedModules[section.name] ? (
+                <ArrowDropDownIcon color="primary" />
+              ) : (
+                <ArrowRightIcon color="primary" />
+              )}
+            </ListItemButton>
+
+            {/* Collapsible items within the section */}
+            <Collapse
+              in={selectedModules[section.name]}
+              timeout="auto"
+              unmountOnExit
+            >
+              <List component="div" disablePadding>
+                {section.items.map((item, index) => (
+                  <ListItemButton
+                    key={index}
+                    sx={{ paddingLeft: 4 }}
+                    onClick={() => navigate(item.url)}
+                  >
+                    <ListItemText primary={item.name} />
+                  </ListItemButton>
+                ))}
+              </List>
+            </Collapse>
+          </Box>
+        ))}
+
+        <Divider />
         <List>
           {["Share", "News Post"].map((text, index) => (
             <ListItem key={text} disablePadding style={{ display: "block" }}>
@@ -440,6 +525,4 @@ const AdminHeader = () => {
       </MuiDrawer>
     </React.Fragment>
   );
-};
-
-export default AdminHeader;
+}

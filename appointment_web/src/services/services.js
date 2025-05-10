@@ -14,6 +14,23 @@ export const postRecord = (url, data) => {
         headers: {
           "Content-Type": "application/json",
           accept: "application/json",
+          "security-key": APPSECRET,
+        },
+      })
+      .then((res) => resolve(res.data))
+      .catch((err) => {
+        console.error("API POST error:", err.response?.data || err.message);
+        reject(err);
+      });
+  });
+};
+export const authPostRecord = (url, data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${APIURL}${url}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          accept: "application/json",
           "secret-key": APPSECRET,
         },
       })
@@ -136,7 +153,7 @@ export const putRecord = (url, data) => {
         headers: {
           "Content-Type": "application/json",
           accept: "application/json",
-          "secret-key": APPSECRET,
+          "security-key": APPSECRET,
         },
       })
       .then((res) => {
@@ -145,19 +162,35 @@ export const putRecord = (url, data) => {
       .catch((err) => reject(err));
   });
 };
-export const deleteRecord = (url, data) => {
-  data.SECRET_KEY = APPSECRET;
-  return new Promise((resolve, reject) => {
-    axios
-      .delete(APIURL + url, {
-        headers,
-        data: data,
-      })
-      .then((res) => {
-        resolve(res);
-      })
-      .catch((err) => reject(err));
-  });
+// export const deleteRecord = (url, data) => {
+//   data.SECRET_KEY = APPSECRET;
+//   return new Promise((resolve, reject) => {
+//     axios
+//       .delete(APIURL + url, {
+//         headers,
+//         data: data,
+//       })
+//       .then((res) => {
+//         resolve(res);
+//       })
+//       .catch((err) => reject(err));
+//   });
+// };
+export const deleteRecord = async (url) => {
+  try {
+    const response = await axios.delete(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+        "security-key": APPSECRET,
+      },
+    });
+    return response.json();
+  } catch (error) {
+    console.error("Delete API error:", error);
+    return { status: "error", message: "Network error" };
+  }
 };
 export const getRecordById = (url, id) => {
   return new Promise((resolve, reject) => {

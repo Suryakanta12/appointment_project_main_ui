@@ -31,7 +31,7 @@ import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
-  postRecord,
+  authPostRecord,
   getRecord,
   postMultipleRecords,
   setAuthToken,
@@ -164,8 +164,8 @@ export default function SignUp() {
       setSubmitting(true);
 
       // ✅ Step 1: Register User
-      const response = await postRecord(API_Register, thisRegistration);
-      console.log("API Response:", response); // Log the full response for debugging
+      const response = await authPostRecord(API_Register, thisRegistration);
+      // console.log("API Response:", response); // Log the full response for debugging
 
       if (response.status !== "success") {
         setSnackOptions({
@@ -192,11 +192,10 @@ export default function SignUp() {
       const contextData = {
         user: result.data?.user_info || {},
         permissions: result.data?.user_permission || [],
+        usertype: result.data?.user_type_data || {},
         token,
       };
       dispatch({ type: "LOGIN", payload: contextData });
-
-      console.log("result.data-----", result.data);
 
       // ✅ If user type is 2, add business
       if (result.data.user_type_id === 2) {
