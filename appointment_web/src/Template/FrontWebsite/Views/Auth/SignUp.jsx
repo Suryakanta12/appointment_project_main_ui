@@ -100,7 +100,7 @@ export default function SignUp() {
       .then((response) => {
         if (response.status === "success") {
           var typeData = response.data.filter((item) => {
-            return item.User_Type_Id !== 1;
+            return item.User_Type_Id !== 1 && item.Is_Active==='Y';
           });
           setUserTypes(typeData);
         }
@@ -139,11 +139,11 @@ export default function SignUp() {
     setStates(allStates);
   }, []);
 
-  useEffect(() => {
-    if (submitting) {
-      console.log(context.state);
-    }
-  }, [submitting, context.state]);
+  // useEffect(() => {
+  //   if (submitting) {
+  //     console.log(context.state);
+  //   }
+  // }, [submitting, context.state]);
 
   // Load districts whenever state changes
   useEffect(() => {
@@ -421,6 +421,10 @@ export default function SignUp() {
               value={thisRegistration.Phone}
               onChange={handleInputChange}
               name="Phone"
+              inputProps={{
+                maxLength: 10,
+                inputMode: "numeric",
+              }}
               onInput={(e) => onlyNumbers(e)}
             />
             <TextField
