@@ -39,6 +39,8 @@ import HostelAdminDashboard from "./Dashboards/Views/CoAdminDashboard/HostelAdmi
 import UserTypes from "CommonModules/UserModule/UserTypes/UserTypes.jsx";
 import Users from "../CommonModules/UserModule/Users/Users.jsx";
 import Pages from "../CommonModules/UserModule/Pages/Pages.jsx";
+import UserPermission from "../CommonModules/UserModule/UserPermission/UserPermission.jsx";
+import LocationMaster from "../CommonModules/LocationModule/LocationMaster/LocationMaster.jsx";
 
 var hist = createBrowserHistory();
 export default function MainRoutes() {
@@ -62,6 +64,8 @@ export default function MainRoutes() {
             />
           }
         >
+          <Route exact path="/LocationMaster" element={<LocationMaster />} />
+          <Route exact path="/UserPermission" element={<UserPermission />} />
           <Route exact path="/Pages" element={<Pages />} />
           <Route exact path="/UserTypes" element={<UserTypes />} />
           <Route exact path="/Users" element={<Users />} />

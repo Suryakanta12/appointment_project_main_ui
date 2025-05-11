@@ -120,7 +120,7 @@ const moduleData = {
         { name: "Users", url: "/Users" },
         { name: "Pages", url: "/Pages" },
         { name: "User Permission", url: "/UserPermission" },
-        { name: "Logs", url: "/Logs" },
+        // { name: "Logs", url: "/Logs" },
       ],
       icon: <AccountCircleIcon color="primary" />,
     },
@@ -405,7 +405,7 @@ export default function AdminHeader() {
         </div>
         <Divider />
         <List>
-          <ListItemButton>
+          <ListItemButton onClick={() => navigate("/AdminDashboard")}>
             <ListItemIcon>
               <DashboardIcon color="primary" />
             </ListItemIcon>
