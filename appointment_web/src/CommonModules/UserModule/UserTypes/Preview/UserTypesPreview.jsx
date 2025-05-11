@@ -1,13 +1,5 @@
-import * as React from "react";
-import {
-  DataGrid,
-  GridToolbarContainer,
-  GridToolbarExport,
-  GridToolbarColumnsButton,
-  GridToolbarFilterButton,
-  GridToolbarDensitySelector,
-  GridToolbarQuickFilter,
-} from "@mui/x-data-grid";
+import React, { useState, forwardRef } from "react";
+import { DataGrid } from "@mui/x-data-grid";
 import {
   Box,
   Button,
@@ -15,84 +7,26 @@ import {
   Paper,
   Tooltip,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PrintIcon from "@mui/icons-material/Print";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import CustomTableToolbar from "../../../../CommonComponents/CustomTableToolbar";
 
-import { deleteRecord, handleResponse } from "services/services";
+import { deleteRecord } from "services/services";
 
-function CustomToolbar({ rows, columns, selectedIDs, handleDelete }) {
-  const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-
-    const tableHeaders = columns
-      .map((col) => `<th>${col.headerName}</th>`)
-      .join("");
-    const tableRows = rows
-      .map(
-        (row) =>
-          `<tr>${columns.map((col) => `<td>${row[col.field] ?? ""}</td>`).join("")}</tr>`,
-      )
-      .join("");
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>Print View</title>
-          <style>
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-            th { background-color: #f5f5f5; }
-          </style>
-        </head>
-        <body>
-          <h2>DataGrid Print View</h2>
-          <table>
-            <thead><tr>${tableHeaders}</tr></thead>
-            <tbody>${tableRows}</tbody>
-          </table>
-        </body>
-      </html>
-    `);
-
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-  };
-
-  return (
-    <GridToolbarContainer
-      sx={{ m: 2, display: "flex", justifyContent: "flex-end" }}
-    >
-      <GridToolbarQuickFilter />
-      <GridToolbarColumnsButton />
-      <GridToolbarFilterButton />
-      <GridToolbarDensitySelector />
-      <GridToolbarExport printOptions={{ disableToolbarButton: true }} />
-
-      <Tooltip title="Print">
-        <IconButton onClick={handlePrint} color="primary" sx={{ ml: 2 }}>
-          <PrintIcon />
-        </IconButton>
-      </Tooltip>
-
-      {selectedIDs.length > 0 && (
-        <Tooltip title="Delete selected">
-          <IconButton onClick={handleDelete} color="error" sx={{ ml: 2 }}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </GridToolbarContainer>
-  );
-}
-
+const Transition = forwardRef((props, ref) => (
+  <Slide direction="up" ref={ref} {...props} />
+));
 export default function UserTypePreview(props) {
-  const columns = [
+  const userTypeColumns = [
     {
       field: "actions",
-      headerName: "Actions",
+      headerName: "Edit",
       minWidth: 100,
       sortable: false,
       filterable: false,
@@ -128,59 +62,71 @@ export default function UserTypePreview(props) {
     setThisUserTypes,
     setIsEditMode,
     loading,
+    setProcessing,
+    snackOpen,
+    setSnackOpen,
+    snackOptions,
+    setSnackOptions,
     routeAccess,
   } = props;
-  const [selectedIDs, setSelectedIDs] = React.useState([]);
+  const [selectedIDs, setSelectedIDs] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [pendingDeleteIDs, setPendingDeleteIDs] = useState([]);
 
   const handleSelectionChange = (selectionModel) => {
     setSelectedIDs(selectionModel);
   };
   // console.log("allUserTypes", allUserTypes);
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (selectedIDs.length === 0) return;
+    setPendingDeleteIDs(selectedIDs); // store the IDs temporarily
+    setDeleteDialogOpen(true); // open dialog
+  };
 
-    try {
-      // Optional: confirmation prompt
-      const confirmDelete = window.confirm(
-        `Are you sure you want to delete ${selectedIDs.length} record(s)?`,
-      );
-      if (!confirmDelete) return;
+  const handleConfirmDelete = () => {
+    setProcessing(true);
+    const deletePromises = pendingDeleteIDs.map((id) =>
+      deleteRecord(`api/v1/usertypes/delete-usertypes/${id}`),
+    );
 
-      // Call delete API for each ID
-      const deletePromises = selectedIDs.map((id) =>
-        deleteRecord(`api/v1/usertypes/delete-usertypes/${id}`),
-      );
+    Promise.all(deletePromises)
+      .then((responses) => {
+        const failedDeletes = responses.filter(
+          (res) => res?.status !== "success",
+        );
 
-      const responses = await Promise.all(deletePromises);
-      console.log("responses---", deletePromises);
+        if (failedDeletes.length > 0) {
+          setSnackOptions({
+            color: "error",
+            message: `${failedDeletes.length} deletions failed.`,
+          });
+        } else {
+          setSnackOptions({
+            color: "success",
+            message: "Selected user types deleted successfully.",
+          });
 
-      // Handle API responses
-      const failedDeletes = responses.filter(
-        (res) => handleResponse(res)?.status !== "success",
-      );
-
-      if (failedDeletes.length > 0) {
-        alert(`${failedDeletes.length} deletions failed.`);
-      } else {
-        alert("Selected user types deleted successfully.");
-      }
-
-      // Update state by filtering deleted IDs
-      const updatedRows = allUserTypes.filter(
-        (row) => !selectedIDs.includes(row.User_Type_Id),
-      );
-      setAllUserTypes(updatedRows);
-      setSelectedIDs([]);
-    } catch (error) {
-      console.error("Delete error:", error);
-      alert("An error occurred while deleting records.");
-    }
-    // const updatedRows = allUserTypes.filter(
-    //   (row) => !selectedIDs.includes(row.User_Type_Id),
-    // );
-    // setAllUserTypes(updatedRows);
-    // setSelectedIDs([]);
+          const updatedRows = allUserTypes.filter(
+            (row) => !pendingDeleteIDs.includes(row.User_Type_Id),
+          );
+          setAllUserTypes(updatedRows);
+          setSelectedIDs([]);
+        }
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message:
+            err?.response?.data?.detail || "An error occurred while deleting.",
+        });
+      })
+      .finally(() => {
+        setProcessing(false);
+        setSnackOpen(true);
+        setDeleteDialogOpen(false);
+        setPendingDeleteIDs([]);
+      });
   };
 
   const handleEditClick = (row) => {
@@ -190,58 +136,80 @@ export default function UserTypePreview(props) {
   };
 
   return (
-    <Paper
-      sx={{
-        height: 600,
-        width: "100%",
-        overflowX: "auto",
-      }}
-    >
-      {loading ? (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "60vh",
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      ) : (
-        <DataGrid
-          rows={allUserTypes}
-          columns={columns}
-          checkboxSelection
-          disableRowSelectionOnClick
-          pagination
-          pageSizeOptions={[5, 10, 25]}
-          getRowId={(row) => row.User_Type_Id}
-          initialState={{
-            pagination: { paginationModel: { pageSize: 10, page: 0 } },
-          }}
-          onRowSelectionModelChange={handleSelectionChange}
-          rowSelectionModel={selectedIDs}
-          slots={{
-            toolbar: () => (
-              <CustomToolbar
-                rows={allUserTypes}
-                columns={columns}
-                selectedIDs={selectedIDs}
-                handleDelete={handleDelete}
-              />
-            ),
-          }}
-          sx={{
-            borderRadius: 2,
-            boxShadow: 2,
-            "& .MuiDataGrid-columnHeaders": {
-              backgroundColor: "#f0f0f0",
-              fontWeight: "bold",
-            },
-          }}
-        />
-      )}
-    </Paper>
+    <React.Fragment>
+      <Paper
+        sx={{
+          height: 600,
+          width: "100%",
+          overflowX: "auto",
+        }}
+      >
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "60vh",
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        ) : (
+          <DataGrid
+            rows={allUserTypes}
+            columns={userTypeColumns}
+            checkboxSelection
+            disableRowSelectionOnClick
+            pagination
+            pageSizeOptions={[5, 10, 25]}
+            getRowId={(row) => row.User_Type_Id}
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10, page: 0 } },
+            }}
+            onRowSelectionModelChange={handleSelectionChange}
+            rowSelectionModel={selectedIDs}
+            slots={{
+              toolbar: () => (
+                <CustomTableToolbar
+                  rows={allUserTypes}
+                  columns={userTypeColumns}
+                  selectedIDs={selectedIDs}
+                  handleDelete={handleDelete}
+                />
+              ),
+            }}
+            sx={{
+              borderRadius: 2,
+              boxShadow: 2,
+              "& .MuiDataGrid-columnHeaders": {
+                backgroundColor: "#f0f0f0",
+                fontWeight: "bold",
+              },
+            }}
+          />
+        )}
+      </Paper>
+      <Dialog
+        open={deleteDialogOpen}
+        TransitionComponent={Transition}
+        keepMounted
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-describedby="alert-dialog-slide-description"
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-slide-description">
+            Are you sure you want to delete {pendingDeleteIDs.length} record(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleConfirmDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
   );
 }

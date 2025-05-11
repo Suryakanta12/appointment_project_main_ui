@@ -176,21 +176,22 @@ export const putRecord = (url, data) => {
 //       .catch((err) => reject(err));
 //   });
 // };
-export const deleteRecord = async (url) => {
-  try {
-    const response = await axios.delete(url, {
-      method: "DELETE",
+export const deleteRecord = (url) => {
+  return axios
+    .delete(`${APIURL}${url}`, {
       headers: {
         "Content-Type": "application/json",
-        accept: "application/json",
+        Accept: "application/json",
         "security-key": APPSECRET,
       },
+    })
+    .then((response) => {
+      return response.data; // Return parsed JSON response
+    })
+    .catch((error) => {
+      console.error("Delete API error:", error);
+      return { status: "error", message: "Network error" };
     });
-    return response.json();
-  } catch (error) {
-    console.error("Delete API error:", error);
-    return { status: "error", message: "Network error" };
-  }
 };
 export const getRecordById = (url, id) => {
   return new Promise((resolve, reject) => {

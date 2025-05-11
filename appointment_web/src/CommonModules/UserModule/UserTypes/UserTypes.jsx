@@ -113,7 +113,6 @@ export default function UserTypes(props) {
           ),
         );
       }
-     
     });
     return () => {
       componentMounted = false;
@@ -142,48 +141,52 @@ export default function UserTypes(props) {
       });
   };
   const updateUserType = () => {
-   const userTypeId = thisUserTypes.User_Type_Id;
+    const userTypeId = thisUserTypes.User_Type_Id;
 
-   if (!userTypeId) {
-     console.error("User_Type_Id is missing.");
-     return;
-   }
+    if (!userTypeId) {
+      setSnackOptions({
+        color: response.data.color,
+        message: response.data.message,
+      });
+      setSnackOpen(true);
+      return;
+    }
 
-   // Add metadata
-   thisUserTypes.Modified_By = context.state.user.User_Id;
-   thisUserTypes.Modified_On = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    // Add metadata
+    thisUserTypes.Modified_By = context.state.user.User_Id;
+    thisUserTypes.Modified_On = moment(new Date()).format(
+      "YYYY-MM-DD HH:mm:ss",
+    );
 
-   // Replace placeholder with actual ID
-   const endpoint = `api/v1/usertypes/update-usertypes/${userTypeId}`;
+    // Replace placeholder with actual ID
+    const endpoint = `api/v1/usertypes/update-usertypes/${userTypeId}`;
 
-   // Make PUT call
-   putRecord(endpoint, thisUserTypes)
-     .then((response) => {
-       console.log(response)
-       if (response.status === "success") {
-         setSnackOptions({
-           color: response.data.color,
-           message: response.data.message,
-         });
-         
-       } else {
-         setSnackOptions({
-           color: response.data.color,
-           message: response.data.message,
-         });
-       }
-       setProcessing(false);
-       setSnackOpen(true);
-       resetAndPreview();
-     })
-     .catch((err) => {
-       setSnackOptions({
-         color: "error",
-         message: err.response.data.detail,
-       });
-       setSnackOpen(true);
-       setProcessing(false);
-     });
+    // Make PUT call
+    putRecord(endpoint, thisUserTypes)
+      .then((response) => {
+        if (response.status === "success") {
+          setSnackOptions({
+            color: response.data.color,
+            message: response.data.message,
+          });
+        } else {
+          setSnackOptions({
+            color: response.data.color,
+            message: response.data.message,
+          });
+        }
+        setProcessing(false);
+        setSnackOpen(true);
+        resetAndPreview();
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message: err.response.data.detail,
+        });
+        setSnackOpen(true);
+        setProcessing(false);
+      });
   };
   const resetAndPreview = () => {
     setThisUserTypes(initialUserTypesState);
@@ -191,49 +194,7 @@ export default function UserTypes(props) {
     setPreview(true);
     // setProcessing(false);
   };
-  const displayResult = (result) => {
-    console.log(result)
-    if (result.status === "success") {
-      setSnackOptions({ color: result.color, message: result.message });
-      resetAndPreview();
-    } else {
-      setSnackOptions({ color: result.color, message: result.message });
-    }
-    setProcessing(false);
-    setSnackOpen(true);
-  };
-  const breadcrumbs = [
-    <Button
-      key="1"
-      color="inherit"
-      variant="link"
-      size="small"
-      onClick={() => navigate(context.state.user.Default_Page_Url)}
-    >
-      Home
-    </Button>,
 
-    <Button
-      variant="link"
-      size="small"
-      key="3"
-      color="inherit"
-      onClick={resetAndPreview}
-    >
-      User Types
-    </Button>,
-    <Typography
-      color="primary"
-      key="4"
-      sx={{ fontWeight: 600, textTransform: "uppercase" }}
-    >
-      {preview ? (
-        "User Types List"
-      ) : (
-        <>{isEditMode ? "Edit User Types" : "Add New User Types"}</>
-      )}
-    </Typography>,
-  ];
 
   return (
     <React.Fragment>
@@ -327,7 +288,12 @@ export default function UserTypes(props) {
               setAllUserTypes={setAllUserTypes}
               setIsEditMode={setIsEditMode}
               loading={loading}
+              setProcessing={setProcessing}
               routeAccess={routeAccess}
+              snackOpen={snackOpen}
+              setSnackOpen={setSnackOpen}
+              snackOptions={snackOptions}
+              setSnackOptions={setSnackOptions}
             />
           ) : (
             <UserTypesForm
