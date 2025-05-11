@@ -22,88 +22,44 @@ import { deleteRecord } from "services/services";
 const Transition = forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
 ));
-export default function UserTypePreview(props) {
-    const UserColumns = [
-      {
-        field: "actions",
-        headerName: "Edit",
-        minWidth: 100,
-        sortable: false,
-        filterable: false,
-        renderCell: (params) => (
-          <Tooltip title="Edit">
-            <IconButton
-              color="primary"
-              onClick={() => handleEditClick(params.row)}
-            >
-              <EditNoteOutlinedIcon />
-            </IconButton>
-          </Tooltip>
-        ),
-      },
-      { field: "User_Id", headerName: "ID", minWidth: 100 },
-      { field: "Full_Name", headerName: "Full Name", minWidth: 150 },
-      { field: "Email", headerName: "Email", minWidth: 200 },
-      { field: "Phone", headerName: "Phone", minWidth: 150 },
-      { field: "Alt_Phone", headerName: "Alt Phone", minWidth: 150 },
-      { field: "Password_Hash", headerName: "Password Hash", minWidth: 200 },
-      { field: "Forgot_Token", headerName: "Forgot Token", minWidth: 200 },
-      {
-        field: "Forgot_Token_Expiry",
-        headerName: "Token Expiry",
-        minWidth: 180,
-      },
-      { field: "User_Type_Id", headerName: "User Type ID", minWidth: 130 },
-      { field: "Profile_Image", headerName: "Profile Image", minWidth: 200 },
-      {
-        field: "Background_Image",
-        headerName: "Background Image",
-        minWidth: 200,
-      },
-      { field: "Bio", headerName: "Bio", minWidth: 250 },
-      { field: "Website", headerName: "Website", minWidth: 200 },
-      { field: "Social_Links", headerName: "Social Links", minWidth: 250 },
-      { field: "Gender", headerName: "Gender", minWidth: 100 },
-      { field: "DOB", headerName: "DOB", minWidth: 150 },
-      { field: "Occupation", headerName: "Occupation", minWidth: 150 },
-      { field: "Company_Name", headerName: "Company", minWidth: 150 },
-      { field: "GST_Number", headerName: "GST Number", minWidth: 150 },
-      { field: "Referral_Code", headerName: "Referral Code", minWidth: 150 },
-      { field: "Address", headerName: "Address", minWidth: 200 },
-      { field: "City", headerName: "City", minWidth: 120 },
-      { field: "State", headerName: "State", minWidth: 120 },
-      { field: "Country", headerName: "Country", minWidth: 120 },
-      { field: "Postal_Code", headerName: "Postal Code", minWidth: 130 },
-      { field: "Preferred_Language", headerName: "Language", minWidth: 130 },
-      { field: "Is_Verified", headerName: "Verified", minWidth: 100 },
-      { field: "Is_Active", headerName: "Active", minWidth: 100 },
-      { field: "Is_Deleted", headerName: "Deleted", minWidth: 100 },
-      { field: "Wallet_Balance", headerName: "Wallet", minWidth: 130 },
-      { field: "Currency", headerName: "Currency", minWidth: 100 },
-      {
-        field: "Last_Transaction_Id",
-        headerName: "Last Txn ID",
-        minWidth: 200,
-      },
-      { field: "Payment_Mode", headerName: "Payment Mode", minWidth: 150 },
-      {
-        field: "Is_Wallet_Enabled",
-        headerName: "Wallet Enabled",
-        minWidth: 150,
-      },
-      { field: "Added_By", headerName: "Added By", minWidth: 120 },
-      { field: "Added_On", headerName: "Added On", minWidth: 150 },
-      { field: "Modified_By", headerName: "Modified By", minWidth: 120 },
-      { field: "Modified_On", headerName: "Modified On", minWidth: 150 },
-      { field: "Deleted_By", headerName: "Deleted By", minWidth: 120 },
-      { field: "Deleted_On", headerName: "Deleted On", minWidth: 150 },
-    ];
-      
+export default function PagesPreview(props) {
+  const pageColumns = [
+    {
+      field: "actions",
+      headerName: "Edit",
+      minWidth: 100,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <Tooltip title="Edit">
+          <IconButton
+            color="primary"
+            onClick={() => handleEditClick(params.row)}
+          >
+            <EditNoteOutlinedIcon />
+          </IconButton>
+        </Tooltip>
+      ),
+    },
+    { field: "Page_Id", headerName: "ID", minWidth: 100 },
+    { field: "Page_Name", headerName: "Page Name", minWidth: 150 },
+    { field: "Page_Display_Text", headerName: "Page Display", minWidth: 200 },
+    { field: "Page_Navigation_URL", headerName: "Page URL", minWidth: 150 },
+    { field: "Page_Parent_Id", headerName: "Page Parent Id", minWidth: 100 },
+    { field: "Is_Internal", headerName: "Is Internal", minWidth: 100 },
+    { field: "Added_By", headerName: "Added By", minWidth: 150 },
+    { field: "Added_On", headerName: "Added On", minWidth: 150 },
+    { field: "Modified_By", headerName: "Modified By", minWidth: 150 },
+    { field: "Modified_On", headerName: "Modified On", minWidth: 150 },
+    { field: "Deleted_By", headerName: "Deleted By", minWidth: 150 },
+    { field: "Deleted_On", headerName: "Deleted On", minWidth: 150 },
+    { field: "Is_Deleted", headerName: "Deleted", minWidth: 100 },
+  ];
   const {
-    allUsers,
-    setAllUsers,
+    allPages,
+    setAllPages,
     setPreview,
-    setThisUsers,
+    setThisPages,
     setIsEditMode,
     loading,
     setProcessing,
@@ -120,7 +76,7 @@ export default function UserTypePreview(props) {
   const handleSelectionChange = (selectionModel) => {
     setSelectedIDs(selectionModel);
   };
-  // console.log("allUsers", allUsers);
+  // console.log("allPages", allPages);
 
   const handleDelete = () => {
     if (selectedIDs.length === 0) return;
@@ -131,7 +87,7 @@ export default function UserTypePreview(props) {
   const handleConfirmDelete = () => {
     setProcessing(true);
     const deletePromises = pendingDeleteIDs.map((id) =>
-      deleteRecord(`api/v1/users/delete-users/${id}`),
+      deleteRecord(`api/v1/pages/delete-pages/${id}`),
     );
 
     Promise.all(deletePromises)
@@ -148,13 +104,13 @@ export default function UserTypePreview(props) {
         } else {
           setSnackOptions({
             color: "success",
-            message: "Selected users deleted successfully.",
+            message: "Selected Pages deleted successfully.",
           });
 
-          const updatedRows = allUsers.filter(
-            (row) => !pendingDeleteIDs.includes(row.User_Id),
+          const updatedRows = allPages.filter(
+            (row) => !pendingDeleteIDs.includes(row.Page_Id),
           );
-          setAllUsers(updatedRows);
+          setAllPages(updatedRows);
           setSelectedIDs([]);
         }
       })
@@ -174,7 +130,7 @@ export default function UserTypePreview(props) {
   };
 
   const handleEditClick = (row) => {
-    setThisUsers(row); // Set the selected user type
+    setThisPages(row); // Set the selected user type
     setIsEditMode(true); // Enable edit mode
     setPreview(false); // Go back to the form (if applicable)
   };
@@ -201,13 +157,13 @@ export default function UserTypePreview(props) {
           </Box>
         ) : (
           <DataGrid
-            rows={allUsers}
-            columns={UserColumns}
+            rows={allPages}
+            columns={pageColumns}
             checkboxSelection
             disableRowSelectionOnClick
             pagination
             pageSizeOptions={[5, 10, 25]}
-            getRowId={(row) => row.User_Id}
+            getRowId={(row) => row.Page_Id}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
             }}
@@ -216,8 +172,8 @@ export default function UserTypePreview(props) {
             slots={{
               toolbar: () => (
                 <CustomTableToolbar
-                  rows={allUsers}
-                  columns={UserColumns}
+                  rows={allPages}
+                  columns={pageColumns}
                   selectedIDs={selectedIDs}
                   handleDelete={handleDelete}
                 />

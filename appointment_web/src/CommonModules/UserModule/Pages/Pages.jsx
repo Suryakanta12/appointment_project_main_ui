@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : UserTypes
+ * * Section : Pages
  * * Parent : Admin
- * Description : design UserTypes primary admin with Database
+ * Description : design Pages primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -30,8 +30,8 @@ import {
   Button,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import UserTypesForm from "./Form/UserTypesForm.jsx";
-import UserTypesPreview from "./Preview/UserTypesPreview.jsx";
+import PagesForm from "./Form/PagesForm.jsx";
+import PagesPreview from "./Preview/PagesPreview.jsx";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
   postRecord,
@@ -49,24 +49,22 @@ import AdminHeader from "../../../Template/Dashboards/Components/AdminHeader/Adm
 /** ------------------ Media Imports --------------------- */
 /** ------------------ Style Components ------------------ */
 /** ------------------ API Declarations ------------------ */
-const API_GetAllUserTypes = "api/v1/usertypes/all-usertypes";
-const API_AddUserTypes = "api/v1/usertypes/add-usertypes";
-const API_UpdateUserTypes = "api/v1/usertypes/update-usertypes/{user_type_id}";
 const API_GetAllPages = "api/v1/pages/all-pages";
+const API_AddPages = "api/v1/pages/add-pages";
 
 /** ------------------ Third Party Components ------------ */
 
-export default function UserTypes(props) {
+export default function Pages(props) {
   const navigate = useNavigate();
   /** ------------------ Initial States -------------------- */
   const context = useContext(AuthContext);
-  const initialUserTypesState = {
-    User_Type_Id: null,
-    User_Type_Name: "",
-    User_Type_Desc: "",
-    Default_Page: "",
-    Is_Member: "N",
-    Is_Active: "N",
+  const initialPagesState = {
+    Page_Id: null,
+    Page_Name: "",
+    Page_Display_Text: "",
+    Page_Navigation_URL: "",
+    Page_Parent_Id: "0",
+    Is_Internal: "N",
     Added_By: context.state.user.User_Id,
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
   };
@@ -74,13 +72,12 @@ export default function UserTypes(props) {
   const [routeAccess, setRouteAccess] = useState(
     CheckRouteAccess(window.location.pathname),
   );
-  const [allUserTypes, setAllUserTypes] = useState([]);
-  const [thisUserTypes, setThisUserTypes] = useState(initialUserTypesState);
+  const [allPages, setAllPages] = useState([]);
+  const [thisPages, setThisPages] = useState(initialPagesState);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [preview, setPreview] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [allPages, setAllPages] = useState([]);
 
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackOptions, setSnackOptions] = useState({
@@ -91,9 +88,9 @@ export default function UserTypes(props) {
   useEffect(() => {
     let componentMounted = true;
     // console.log();
-    getRecord(API_GetAllUserTypes, {}).then((response) => {
+    getRecord(API_GetAllPages, {}).then((response) => {
       if (response.status === "success" && componentMounted && preview) {
-        setAllUserTypes(response.data);
+        setAllPages(response.data);
         setLoading(false);
       }
     });
@@ -119,8 +116,8 @@ export default function UserTypes(props) {
     };
   }, [preview]);
   /** ------------------ Functions & Events ---------------- */
-  const addUserType = () => {
-    postRecord(API_AddUserTypes, thisUserTypes)
+  const addPages = () => {
+    postRecord(API_AddPages, thisPages)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({ color: response.color, message: response.message });
@@ -140,10 +137,10 @@ export default function UserTypes(props) {
         setProcessing(false);
       });
   };
-  const updateUserType = () => {
-    const userTypeId = thisUserTypes.User_Type_Id;
+  const updatePages = () => {
+    const pageId = thisPages.Page_Id;
 
-    if (!userTypeId) {
+    if (!pageId) {
       setSnackOptions({
         color: response.data.color,
         message: response.data.message,
@@ -153,16 +150,14 @@ export default function UserTypes(props) {
     }
 
     // Add metadata
-    thisUserTypes.Modified_By = context.state.user.User_Id;
-    thisUserTypes.Modified_On = moment(new Date()).format(
-      "YYYY-MM-DD HH:mm:ss",
-    );
+    thisPages.Modified_By = context.state.user.User_Id;
+    thisPages.Modified_On = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 
     // Replace placeholder with actual ID
-    const endpoint = `api/v1/usertypes/update-usertypes/${userTypeId}`;
+    const endpoint = `api/v1/pages/update-pages/${pageId}`;
 
     // Make PUT call
-    putRecord(endpoint, thisUserTypes)
+    putRecord(endpoint, thisPages)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({
@@ -189,12 +184,11 @@ export default function UserTypes(props) {
       });
   };
   const resetAndPreview = () => {
-    setThisUserTypes(initialUserTypesState);
+    setThisPages(initialPagesState);
     setIsEditMode(false);
     setPreview(true);
     // setProcessing(false);
   };
-
 
   return (
     <React.Fragment>
@@ -204,7 +198,7 @@ export default function UserTypes(props) {
           sx={{ my: 10, minWidth: "76vw !important", minHeight: "70vh" }}
         >
           <Box align="left">
-            <Typography variant="h6"> Users Types</Typography>
+            <Typography variant="h6"> Pages</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -232,17 +226,13 @@ export default function UserTypes(props) {
                       color="inherit"
                       onClick={resetAndPreview}
                     >
-                      User Types
+                      Pages
                     </Button>
                     <Typography sx={{ color: "text.primary" }}>
                       {preview ? (
-                        "User Types List"
+                        "Pages List"
                       ) : (
-                        <>
-                          {isEditMode
-                            ? "Edit User Types"
-                            : "Add New User Types"}
-                        </>
+                        <>{isEditMode ? "Edit Pages" : "Add New Pages"}</>
                       )}
                     </Typography>
                   </Breadcrumbs>
@@ -265,7 +255,7 @@ export default function UserTypes(props) {
                   </IconButton>
                 </Tooltip>
                 {!isEditMode && (
-                  <Tooltip title="Add new  User Types" placement="top">
+                  <Tooltip title="Add new  Pages" placement="top">
                     <span>
                       <IconButton
                         color="primary"
@@ -281,11 +271,11 @@ export default function UserTypes(props) {
             </Box>
           </Box>
           {preview ? (
-            <UserTypesPreview
+            <PagesPreview
               setPreview={setPreview}
-              allUserTypes={allUserTypes}
-              setThisUserTypes={setThisUserTypes}
-              setAllUserTypes={setAllUserTypes}
+              allPages={allPages}
+              setThisPages={setThisPages}
+              setAllPages={setAllPages}
               setIsEditMode={setIsEditMode}
               loading={loading}
               setProcessing={setProcessing}
@@ -296,16 +286,16 @@ export default function UserTypes(props) {
               setSnackOptions={setSnackOptions}
             />
           ) : (
-            <UserTypesForm
-              thisUserTypes={thisUserTypes}
-              setThisUserTypes={setThisUserTypes}
-              initialUserTypesState={initialUserTypesState}
+            <PagesForm
+              thisPages={thisPages}
+              setThisPages={setThisPages}
+              initialPagesState={initialPagesState}
               setpreview={setPreview}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
               allPages={allPages}
-              addUserType={addUserType}
-              updateUserType={updateUserType}
+              addPages={addPages}
+              updatePages={updatePages}
               processing={processing}
               setProcessing={setProcessing}
             />

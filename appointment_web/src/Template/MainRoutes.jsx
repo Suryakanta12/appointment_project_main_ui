@@ -38,6 +38,7 @@ import AdminDashboard from "./Dashboards/Views/AdminDashboards/AdminDashboard.js
 import HostelAdminDashboard from "./Dashboards/Views/CoAdminDashboard/HostelAdmin/HostelAdminDashboard.jsx";
 import UserTypes from "CommonModules/UserModule/UserTypes/UserTypes.jsx";
 import Users from "../CommonModules/UserModule/Users/Users.jsx";
+import Pages from "../CommonModules/UserModule/Pages/Pages.jsx";
 
 var hist = createBrowserHistory();
 export default function MainRoutes() {
@@ -61,8 +62,9 @@ export default function MainRoutes() {
             />
           }
         >
+          <Route exact path="/Pages" element={<Pages />} />
           <Route exact path="/UserTypes" element={<UserTypes />} />
-          <Route exact path="/Users" element={<Users/>} />
+          <Route exact path="/Users" element={<Users />} />
           <Route exact path="/AdminDashboard" element={<AdminDashboard />} />
           <Route
             exact
