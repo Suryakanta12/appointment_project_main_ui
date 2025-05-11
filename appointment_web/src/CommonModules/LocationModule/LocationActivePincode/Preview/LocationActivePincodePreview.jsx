@@ -22,7 +22,7 @@ import { deleteRecord } from "services/services";
 const Transition = forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
 ));
-export default function LocationMasterPreview(props) {
+export default function LocationActivePincodePreview(props) {
   const userTypeColumns = [
     {
       field: "actions",
@@ -41,33 +41,19 @@ export default function LocationMasterPreview(props) {
         </Tooltip>
       ),
     },
-    { field: "Location_Id", headerName: "ID", minWidth: 100 },
-    { field: "Location_Name", headerName: "Location Name", minWidth: 150 },
+    { field: "Pincode_Id", headerName: "ID", minWidth: 100 },
+    { field: "Pincode", headerName: "Pincode", minWidth: 150 },
     {
-      field: "Location_City_Name",
-      headerName: "Location City Name",
+      field: "Location_Id",
+      headerName: "Location Id",
       minWidth: 200,
     },
     {
-      field: "Location_Dist_Name",
-      headerName: "Location Dist Name",
+      field: "Location_Status",
+      headerName: "Location Status",
       minWidth: 150,
     },
-    {
-      field: "Location_State_Name",
-      headerName: "Location State Name",
-      minWidth: 100,
-    },
-    {
-      field: "Location_Country_Name",
-      headerName: "Location Country Name",
-      minWidth: 100,
-    },
-    {
-      field: "Location_Desc",
-      headerName: "Location Desc",
-      minWidth: 100,
-    },
+
     { field: "Is_Active", headerName: "Active", minWidth: 100 },
     { field: "Added_By", headerName: "Added By", minWidth: 150 },
     { field: "Added_On", headerName: "Added On", minWidth: 150 },
@@ -78,10 +64,10 @@ export default function LocationMasterPreview(props) {
     { field: "Is_Deleted", headerName: "Deleted", minWidth: 100 },
   ];
   const {
-    allLocationMaster,
-    setAllLocationMaster,
+    allLocationActivePincode,
+    setAllLocationActivePincode,
     setPreview,
-    setThisLocationMaster,
+    setThisLocationActivePincode,
     setIsEditMode,
     loading,
     setProcessing,
@@ -98,7 +84,7 @@ export default function LocationMasterPreview(props) {
   const handleSelectionChange = (selectionModel) => {
     setSelectedIDs(selectionModel);
   };
-  // console.log("allLocationMaster", allLocationMaster);
+  // console.log("allLocationActivePincode", allLocationActivePincode);
 
   const handleDelete = () => {
     if (selectedIDs.length === 0) return;
@@ -109,7 +95,9 @@ export default function LocationMasterPreview(props) {
   const handleConfirmDelete = () => {
     setProcessing(true);
     const deletePromises = pendingDeleteIDs.map((id) =>
-      deleteRecord(`api/v1/locationmaster/delete-locationmaster/${id}`),
+      deleteRecord(
+        `api/v1/locationactivepincode/delete-locationactivepincode/${id}`,
+      ),
     );
 
     Promise.all(deletePromises)
@@ -129,10 +117,10 @@ export default function LocationMasterPreview(props) {
             message: "Selected location master deleted successfully.",
           });
 
-          const updatedRows = allLocationMaster.filter(
-            (row) => !pendingDeleteIDs.includes(row.Location_Id),
+          const updatedRows = allLocationActivePincode.filter(
+            (row) => !pendingDeleteIDs.includes(row.Pincode_Id),
           );
-          setAllLocationMaster(updatedRows);
+          setAllLocationActivePincode(updatedRows);
           setSelectedIDs([]);
         }
       })
@@ -152,7 +140,7 @@ export default function LocationMasterPreview(props) {
   };
 
   const handleEditClick = (row) => {
-    setThisLocationMaster(row); // Set the selected user type
+    setThisLocationActivePincode(row); // Set the selected user type
     setIsEditMode(true); // Enable edit mode
     setPreview(false); // Go back to the form (if applicable)
   };
@@ -179,13 +167,13 @@ export default function LocationMasterPreview(props) {
           </Box>
         ) : (
           <DataGrid
-            rows={allLocationMaster}
+            rows={allLocationActivePincode}
             columns={userTypeColumns}
             checkboxSelection
             disableRowSelectionOnClick
             pagination
             pageSizeOptions={[5, 10, 25]}
-            getRowId={(row) => row.Location_Id}
+            getRowId={(row) => row.Pincode_Id}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
             }}
@@ -194,7 +182,7 @@ export default function LocationMasterPreview(props) {
             slots={{
               toolbar: () => (
                 <CustomTableToolbar
-                  rows={allLocationMaster}
+                  rows={allLocationActivePincode}
                   columns={userTypeColumns}
                   selectedIDs={selectedIDs}
                   handleDelete={handleDelete}

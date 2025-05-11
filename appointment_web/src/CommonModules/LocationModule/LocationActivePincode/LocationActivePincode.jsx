@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : LocationMaster
+ * * Section : LocationActivePincode
  * * Parent : Admin
- * Description : design LocationMaster primary admin with Database
+ * Description : design LocationActivePincode primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -30,8 +30,8 @@ import {
   Button,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import LocationMasterForm from "./Form/LocationMasterForm.jsx";
-import LocationMasterPreview from "./Preview/LocationMasterPreview.jsx";
+import LocationActivePincodeForm from "./Form/LocationActivePincodeForm.jsx";
+import LocationActivePincodePreview from "./Preview/LocationActivePincodePreview.jsx";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
   postRecord,
@@ -49,23 +49,22 @@ import AdminHeader from "../../../Template/Dashboards/Components/AdminHeader/Adm
 /** ------------------ Media Imports --------------------- */
 /** ------------------ Style Components ------------------ */
 /** ------------------ API Declarations ------------------ */
-const API_GetAllLocationMaster = "api/v1/locationmaster/all-locationmaster";
-const API_AddLocationMaster = "api/v1/locationmaster/add-locationmaster";
+const API_GetAllLocationActivePincode =
+  "api/v1/locationactivepincode/all-locationactivepincode";
+const API_AddLocationActivePincode =
+  "api/v1/locationactivepincode/add-locationactivepincode";
 
 /** ------------------ Third Party Components ------------ */
 
-export default function LocationMaster(props) {
+export default function LocationActivePincode(props) {
   const navigate = useNavigate();
   /** ------------------ Initial States -------------------- */
   const context = useContext(AuthContext);
-  const initialLocationMasterState = {
-    Location_Id: null,
-    Location_Name: "",
-    Location_City_Name: "",
-    Location_Dist_Name: "",
-    Location_State_Name: "",
-    Location_Country_Name: "India",
-    Location_Desc: "",
+  const initialLocationActivePincodeState = {
+    Pincode_Id: null,
+    Pincode: "",
+    Location_Id: "",
+    Location_Status: "",
     Is_Active: "N",
     Added_By: context.state.user.User_Id,
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
@@ -74,9 +73,9 @@ export default function LocationMaster(props) {
   const [routeAccess, setRouteAccess] = useState(
     CheckRouteAccess(window.location.pathname),
   );
-  const [allLocationMaster, setAllLocationMaster] = useState([]);
-  const [thisLocationMaster, setThisLocationMaster] = useState(
-    initialLocationMasterState,
+  const [allLocationActivePincode, setAllLocationActivePincode] = useState([]);
+  const [thisLocationActivePincode, setThisLocationActivePincode] = useState(
+    initialLocationActivePincodeState,
   );
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -92,9 +91,9 @@ export default function LocationMaster(props) {
   useEffect(() => {
     let componentMounted = true;
     // console.log();
-    getRecord(API_GetAllLocationMaster, {}).then((response) => {
+    getRecord(API_GetAllLocationActivePincode, {}).then((response) => {
       if (response.status === "success" && componentMounted && preview) {
-        setAllLocationMaster(response.data);
+        setAllLocationActivePincode(response.data);
         setLoading(false);
       }
     });
@@ -103,9 +102,10 @@ export default function LocationMaster(props) {
     };
   }, [preview]);
 
+
   /** ------------------ Functions & Events ---------------- */
-  const addLocationMaster = () => {
-    postRecord(API_AddLocationMaster, thisLocationMaster)
+  const addLocationActivePincode = () => {
+    postRecord(API_AddLocationActivePincode, thisLocationActivePincode)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({ color: response.color, message: response.message });
@@ -126,8 +126,8 @@ export default function LocationMaster(props) {
         setProcessing(false);
       });
   };
-  const updateLocationMaster = () => {
-    const locationId = thisLocationMaster.Location_Id;
+  const updateLocationActivePincode = () => {
+    const locationId = thisLocationActivePincode.Pincode_Id;
 
     if (!locationId) {
       setSnackOptions({
@@ -139,16 +139,16 @@ export default function LocationMaster(props) {
     }
 
     // Add metadata
-    thisLocationMaster.Modified_By = context.state.user.User_Id;
-    thisLocationMaster.Modified_On = moment(new Date()).format(
+    thisLocationActivePincode.Modified_By = context.state.user.User_Id;
+    thisLocationActivePincode.Modified_On = moment(new Date()).format(
       "YYYY-MM-DD HH:mm:ss",
     );
 
     // Replace placeholder with actual ID
-    const endpoint = `api/v1/locationmaster/update-locationmaster/${locationId}`;
+    const endpoint = `api/v1/locationactivepincode/update-locationactivepincode/${locationId}`;
 
     // Make PUT call
-    putRecord(endpoint, thisLocationMaster)
+    putRecord(endpoint, thisLocationActivePincode)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({
@@ -175,7 +175,7 @@ export default function LocationMaster(props) {
       });
   };
   const resetAndPreview = () => {
-    setThisLocationMaster(initialLocationMasterState);
+    setThisLocationActivePincode(initialLocationActivePincodeState);
     setIsEditMode(false);
     setPreview(true);
     // setProcessing(false);
@@ -189,7 +189,7 @@ export default function LocationMaster(props) {
           sx={{ my: 10, minWidth: "76vw !important", minHeight: "70vh" }}
         >
           <Box align="left">
-            <Typography variant="h6"> Location Master</Typography>
+            <Typography variant="h6"> Location Active Pincode</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -217,16 +217,16 @@ export default function LocationMaster(props) {
                       color="inherit"
                       onClick={resetAndPreview}
                     >
-                      Location Master
+                      Location Active Pincode
                     </Button>
                     <Typography sx={{ color: "text.primary" }}>
                       {preview ? (
-                        "Location Master List"
+                        "Location Active Pincode List"
                       ) : (
                         <>
                           {isEditMode
-                            ? "Edit Location Master"
-                            : "Add New Location Master"}
+                            ? "Edit Location Active Pincode"
+                            : "Add New Location Active Pincode"}
                         </>
                       )}
                     </Typography>
@@ -250,7 +250,7 @@ export default function LocationMaster(props) {
                   </IconButton>
                 </Tooltip>
                 {!isEditMode && (
-                  <Tooltip title="Add new Location Master" placement="top">
+                  <Tooltip title="Add new Location Active Pincode" placement="top">
                     <span>
                       <IconButton
                         color="primary"
@@ -266,11 +266,11 @@ export default function LocationMaster(props) {
             </Box>
           </Box>
           {preview ? (
-            <LocationMasterPreview
+            <LocationActivePincodePreview
               setPreview={setPreview}
-              allLocationMaster={allLocationMaster}
-              setThisLocationMaster={setThisLocationMaster}
-              setAllLocationMaster={setAllLocationMaster}
+              allLocationActivePincode={allLocationActivePincode}
+              setThisLocationActivePincode={setThisLocationActivePincode}
+              setAllLocationActivePincode={setAllLocationActivePincode}
               setIsEditMode={setIsEditMode}
               loading={loading}
               setProcessing={setProcessing}
@@ -281,15 +281,17 @@ export default function LocationMaster(props) {
               setSnackOptions={setSnackOptions}
             />
           ) : (
-            <LocationMasterForm
-              thisLocationMaster={thisLocationMaster}
-              setThisLocationMaster={setThisLocationMaster}
-              initialLocationMasterState={initialLocationMasterState}
+            <LocationActivePincodeForm
+              thisLocationActivePincode={thisLocationActivePincode}
+              setThisLocationActivePincode={setThisLocationActivePincode}
+              initialLocationActivePincodeState={
+                initialLocationActivePincodeState
+              }
               setpreview={setPreview}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
-              addLocationMaster={addLocationMaster}
-              updateLocationMaster={updateLocationMaster}
+              addLocationActivePincode={addLocationActivePincode}
+              updateLocationActivePincode={updateLocationActivePincode}
               processing={processing}
               setProcessing={setProcessing}
             />

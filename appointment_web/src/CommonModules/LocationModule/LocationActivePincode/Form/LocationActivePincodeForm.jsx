@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : LocationMaster Form
+ * * Section : LocationActivePincode Form
  * * Parent : Admin
- * Description : design LocationMaster form primary admin with Database
+ * Description : design LocationActivePincode form primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -29,7 +29,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import IndianStatesAndDistricts from "../../../../CommonComponents/IndianStatesAndDistricts.json";
 /** ------------------ Icons ----------------------------- */
 import SaveIcon from "@mui/icons-material/Save";
 /** ------------------ Media Imports --------------------- */
@@ -37,14 +36,14 @@ import SaveIcon from "@mui/icons-material/Save";
 /** ------------------ API Declarations ------------------ */
 /** ------------------ Third Party Components ------------ */
 
-export default function LocationMasterForm(props) {
+export default function LocationActivePincodeForm(props) {
   /** ------------------ Props ------------------------- */
   const {
-    thisLocationMaster,
-    setThisLocationMaster,
+    thisLocationActivePincode,
+    setThisLocationActivePincode,
     isEditMode,
-    addLocationMaster,
-    updateLocationMaster,
+    addLocationActivePincode,
+    updateLocationActivePincode,
     processing,
     setProcessing,
   } = props;
@@ -53,33 +52,19 @@ export default function LocationMasterForm(props) {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
   /** ------------------ useEffects ------------------------ */
-  useEffect(() => {
-    const allStates = IndianStatesAndDistricts.states.map((item) => item.state);
-    setStates(allStates);
-  }, []);
-  useEffect(() => {
-    if (thisLocationMaster.Location_State_Name) {
-      const stateData = IndianStatesAndDistricts.states.find(
-        (item) => item.state === thisLocationMaster.Location_State_Name,
-      );
-      setDistricts(stateData ? stateData.districts : []);
-    } else {
-      setDistricts([]);
-    }
-  }, [thisLocationMaster.Location_State_Name]);
   /** ------------------ Functions & Events ---------------- */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setThisLocationMaster({ ...thisLocationMaster, [name]: value });
+    setThisLocationActivePincode({ ...thisLocationActivePincode, [name]: value });
   };
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     var ischecked = checked ? "Y" : "N";
-    setThisLocationMaster({ ...thisLocationMaster, [name]: ischecked });
+    setThisLocationActivePincode({ ...thisLocationActivePincode, [name]: ischecked });
   };
   const handleSubmit = () => {
     setProcessing(true);
-    isEditMode ? updateLocationMaster() : addLocationMaster();
+    isEditMode ? updateLocationActivePincode() : addLocationActivePincode();
   };
   return (
     <React.Fragment>
@@ -95,11 +80,11 @@ export default function LocationMasterForm(props) {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  label="Location Name"
+                  label="Pincode"
                   fullWidth
                   variant="outlined"
-                  name="Location_Name"
-                  value={thisLocationMaster.Location_Name}
+                  name="Pincode"
+                  value={thisLocationActivePincode.Pincode}
                   onChange={handleInputChange}
                   inputProps={{
                     maxLength: 50,
@@ -113,90 +98,38 @@ export default function LocationMasterForm(props) {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  label="Location City Name"
+                  label="Location Id"
                   fullWidth
                   variant="outlined"
-                  name="Location_City_Name"
-                  value={thisLocationMaster.Location_City_Name}
+                  name="Location_Id"
+                  value={thisLocationActivePincode.Location_Id}
                   onChange={handleInputChange}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  disabled
-                  label="Location Country Name"
+                  label="Location Status"
                   fullWidth
                   variant="outlined"
-                  name="Location_Country_Name"
-                  value={thisLocationMaster.Location_Country_Name}
+                  name="Location_Status"
+                  value={thisLocationActivePincode.Location_Status}
                   onChange={handleInputChange}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="State"
-                  name="Location_State_Name"
-                  value={thisLocationMaster.Location_State_Name}
-                  onChange={handleInputChange}
-                >
-                  {states &&
-                    states.length > 0 &&
-                    states.map((state, i) => (
-                      <MenuItem value={state} key={i}>
-                        {state}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                <TextField
-                  select
-                  fullWidth
-                  label="City"
-                  name="Location_Dist_Name"
-                  value={thisLocationMaster.Location_Dist_Name}
-                  onChange={handleInputChange}
-                >
-                  {districts &&
-                    districts.length > 0 &&
-                    districts.map((district, i) => (
-                      <MenuItem value={district} key={states}>
-                        {district}
-                      </MenuItem>
-                    ))}
-                </TextField>
-              </Grid>
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
-                <TextField
-                  label="Descriptions"
-                  fullWidth
-                  multiline
-                  rows={4}
-                  variant="outlined"
-                  name="Location_Desc"
-                  value={thisLocationMaster.Location_Desc}
-                  onChange={handleInputChange}
-                  inputProps={{
-                    maxLength: 250,
-                    minLength: 1,
-                    title:
-                      "length must be numeric, minimum 1 and maximum digits",
-                  }}
-                  helperText="Length- Minimum 1, Maximum 250"
-                />
-              </Grid>
+
+
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       name="Is_Active"
-                      value={thisLocationMaster.Is_Active}
+                      value={thisLocationActivePincode.Is_Active}
                       onChange={handleCheckboxChange}
                       checked={
-                        thisLocationMaster.Is_Active === "Y" ? true : false
+                        thisLocationActivePincode.Is_Active === "Y"
+                          ? true
+                          : false
                       }
                     />
                   }
