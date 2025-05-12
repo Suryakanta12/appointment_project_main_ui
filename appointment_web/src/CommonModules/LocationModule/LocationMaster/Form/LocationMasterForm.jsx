@@ -144,8 +144,8 @@ export default function LocationMasterForm(props) {
                 >
                   {states &&
                     states.length > 0 &&
-                    states.map((state, i) => (
-                      <MenuItem value={state} key={i}>
+                    states.map((state, si) => (
+                      <MenuItem value={state} key={si}>
                         {state}
                       </MenuItem>
                     ))}
@@ -162,8 +162,8 @@ export default function LocationMasterForm(props) {
                 >
                   {districts &&
                     districts.length > 0 &&
-                    districts.map((district, i) => (
-                      <MenuItem value={district} key={states}>
+                    districts.map((district, di) => (
+                      <MenuItem value={district} key={di}>
                         {district}
                       </MenuItem>
                     ))}

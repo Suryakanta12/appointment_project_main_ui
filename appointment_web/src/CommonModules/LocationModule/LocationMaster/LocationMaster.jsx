@@ -103,6 +103,43 @@ export default function LocationMaster(props) {
     };
   }, [preview]);
 
+  // useEffect(() => {
+  //   let componentMounted = true;
+  //   if (
+  //     thisLocationMaster.Location_State_Name &&
+  //     thisLocationMaster.Location_Dist_Name
+  //   ) {
+  //     fetch(
+  //       `https://api.postalpincode.in/postoffice/${thisLocationMaster.Location_Dist_Name}`,
+  //     )
+  //       .then((res) => res.json())
+  //       .then((data) => {
+  //         console.log("data", data[0]);
+  //         if (data[0]?.Status === "Success") {
+  //          var dists = data[0].PostOffice.map(
+  //            (dist) => dist.District,
+  //          );
+  //           console.log("dist", dists);
+  //           const pins = data[0].PostOffice.map((po) => po.Pincode);
+  //           console.log([...new Set(pins)]);
+  //           // setPincodes([...new Set(pins)]); // remove duplicates
+  //         } else {
+  //           console.log([]);
+  //           // setPincodes([]);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.error("API Error:", err);
+  //         // setPincodes([]);
+  //       });
+  //   }
+  //   return () => {
+  //     componentMounted = false;
+  //   };
+  // }, [
+  //   thisLocationMaster.Location_State_Name,thisLocationMaster.Location_Dist_Name,
+  // ]);
+
   /** ------------------ Functions & Events ---------------- */
   const addLocationMaster = () => {
     postRecord(API_AddLocationMaster, thisLocationMaster)
