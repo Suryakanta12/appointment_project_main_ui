@@ -136,9 +136,9 @@ const moduleData = {
     {
       name: "Bussiness Module",
       items: [
-        { name: "Bussiness Man User", url: "/BussinessManUser" },
-        { name: "Bussiness Type", url: "/BussinessType" },
-        { name: "Bussiness Categories", url: "/Bussiness Categories" },
+        { name: "Business Man User", url: "/BussinessManUser" },
+        { name: "Business Type", url: "/BussinessType" },
+        { name: "Business Categories", url: "/BusinessCategories" },
       ],
       icon: <WorkIcon color="primary" />,
     },

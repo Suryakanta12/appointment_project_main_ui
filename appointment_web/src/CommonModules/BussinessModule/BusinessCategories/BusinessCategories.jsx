@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : BussinessType
+ * * Section : BusinessCategories
  * * Parent : Admin
- * Description : design BussinessType primary admin with Database
+ * Description : design BusinessCategories primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -30,8 +30,8 @@ import {
   Button,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import BussinessTypeForm from "./Form/BussinessTypeForm.jsx";
-import BussinessTypePreview from "./Preview/BussinessTypePreview.jsx";
+import BusinessCategoriesForm from "./Form/BusinessCategoriesForm.jsx";
+import BusinessCategoriesPreview from "./Preview/BusinessCategoriesPreview.jsx";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
   postRecord,
@@ -49,23 +49,27 @@ import AdminHeader from "../../../Template/Dashboards/Components/AdminHeader/Adm
 /** ------------------ Media Imports --------------------- */
 /** ------------------ Style Components ------------------ */
 /** ------------------ API Declarations ------------------ */
+const API_GetAllBusinessCategories =
+  "api/v1/businesscategories/all-businesscategories";
+const API_AddBusinessCategories =
+  "api/v1/businesscategories/add-businesscategories";
 const API_GetAllBussinessType = "api/v1/businesstype/all-businesstypes";
-const API_AddBussinessType = "api/v1/businesstype/add-businesstypes";
 
 /** ------------------ Third Party Components ------------ */
 
-export default function BussinessType(props) {
+export default function (props) {
   const navigate = useNavigate();
   /** ------------------ Initial States -------------------- */
   const context = useContext(AuthContext);
-  const initialBussinessTypeState = {
-    Business_Type_Id: null,
-    Business_Type_Name: "",
-    Business_Type_Desc: "",
-    Business_Code: "",
-    Business_Status: "",
+  const initialBusinessCategoriesState = {
+    Business_Category_Id: null,
+    Business_Type_Id: "",
+    Business_Category_Name: "",
+    Business_Category_Short_Name: "",
+    Business_Category_Code: "",
+    Business_Category_Description: "",
     Is_Active: "N",
-    Business_Media: "",
+    Business_Category_Media: "",
     Added_By: context.state.user.User_Id,
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
   };
@@ -73,9 +77,10 @@ export default function BussinessType(props) {
   const [routeAccess, setRouteAccess] = useState(
     CheckRouteAccess(window.location.pathname),
   );
-  const [allBussinessType, setAllBussinessType] = useState([]);
-  const [thisBussinessType, setThisBussinessType] = useState(
-    initialBussinessTypeState,
+    const [allBusinessCategories, setAllBusinessCategories] = useState([]);
+    const [allBussinessType, setAllBussinessType] = useState([]);
+  const [thisBusinessCategories, setThisBusinessCategories] = useState(
+    initialBusinessCategoriesState,
   );
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -91,9 +96,9 @@ export default function BussinessType(props) {
   useEffect(() => {
     let componentMounted = true;
     // console.log();
-    getRecord(API_GetAllBussinessType, {}).then((response) => {
+      getRecord(API_GetAllBusinessCategories, {}).then((response) => {
       if (response.status === "success" && componentMounted && preview) {
-        setAllBussinessType(response.data);
+        setAllBusinessCategories(response.data);
         setLoading(false);
       }
     });
@@ -101,9 +106,21 @@ export default function BussinessType(props) {
       componentMounted = false;
     };
   }, [preview]);
+      useEffect(() => {
+        let componentMounted = true;
+        // console.log();
+        getRecord(API_GetAllBussinessType, {}).then((response) => {
+          if (response.status === "success" && componentMounted && !preview) {
+            setAllBussinessType(response.data);
+          }
+        });
+        return () => {
+          componentMounted = false;
+        };
+      }, [!preview]);
   /** ------------------ Functions & Events ---------------- */
-  const addBussinessType = () => {
-    postRecord(API_AddBussinessType, thisBussinessType)
+  const addBusinessCategories = () => {
+    postRecord(API_AddBusinessCategories, thisBusinessCategories)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({ color: response.color, message: response.message });
@@ -123,29 +140,29 @@ export default function BussinessType(props) {
         setProcessing(false);
       });
   };
-  const updateBussinessType = () => {
-    const bussinessTypeId = thisBussinessType.Business_Type_Id;
+  const updateBusinessCategories = () => {
+    const businessCategoriesId = thisBusinessCategories.Business_Category_Id;
 
-    if (!bussinessTypeId) {
+    if (!businessCategoriesId) {
       setSnackOptions({
         color: "error",
-        message: 'Please Check internet connection. Refresh and Try again!',
+        message: "Please Check internet connection. Refresh and Try again!",
       });
       setSnackOpen(true);
       return;
     }
 
     // Add metadata
-    thisBussinessType.Modified_By = context.state.user.User_Id;
-    thisBussinessType.Modified_On = moment(new Date()).format(
+    thisBusinessCategories.Modified_By = context.state.user.User_Id;
+    thisBusinessCategories.Modified_On = moment(new Date()).format(
       "YYYY-MM-DD HH:mm:ss",
     );
 
     // Replace placeholder with actual ID
-    const endpoint = `api/v1/businesstype/update-businesstypes/${bussinessTypeId}`;
+    const endpoint = `api/v1/businesstype/update-businesstypes/${businessCategoriesId}`;
 
     // Make PUT call
-    putRecord(endpoint, thisBussinessType)
+    putRecord(endpoint, thisBusinessCategories)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({
@@ -172,7 +189,7 @@ export default function BussinessType(props) {
       });
   };
   const resetAndPreview = () => {
-    setThisBussinessType(initialBussinessTypeState);
+    setThisBusinessCategories(initialBusinessCategoriesState);
     setIsEditMode(false);
     setPreview(true);
     // setProcessing(false);
@@ -186,7 +203,7 @@ export default function BussinessType(props) {
           sx={{ my: 10, minWidth: "76vw !important", minHeight: "70vh" }}
         >
           <Box align="left">
-            <Typography variant="h6"> Bussiness Type</Typography>
+            <Typography variant="h6"> Business Categories</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -214,16 +231,16 @@ export default function BussinessType(props) {
                       color="inherit"
                       onClick={resetAndPreview}
                     >
-                      Bussiness Type
+                      Business Categories
                     </Button>
                     <Typography sx={{ color: "text.primary" }}>
                       {preview ? (
-                        "Bussiness Type List"
+                        "Business Categories List"
                       ) : (
                         <>
                           {isEditMode
-                            ? "Edit Bussiness Type"
-                            : "Add New Bussiness Type"}
+                            ? "Edit Business Categories"
+                            : "Add New Business Categories"}
                         </>
                       )}
                     </Typography>
@@ -247,7 +264,7 @@ export default function BussinessType(props) {
                   </IconButton>
                 </Tooltip>
                 {!isEditMode && (
-                  <Tooltip title="Add new  Bussiness Type" placement="top">
+                  <Tooltip title="Add new  Business Categories" placement="top">
                     <span>
                       <IconButton
                         color="primary"
@@ -263,11 +280,11 @@ export default function BussinessType(props) {
             </Box>
           </Box>
           {preview ? (
-            <BussinessTypePreview
+            <BusinessCategoriesPreview
               setPreview={setPreview}
-              allBussinessType={allBussinessType}
-              setThisBussinessType={setThisBussinessType}
-              setAllBussinessType={setAllBussinessType}
+              allBusinessCategories={allBusinessCategories}
+              setThisBusinessCategories={setThisBusinessCategories}
+              setAllBusinessCategories={setAllBusinessCategories}
               setIsEditMode={setIsEditMode}
               loading={loading}
               setProcessing={setProcessing}
@@ -278,15 +295,16 @@ export default function BussinessType(props) {
               setSnackOptions={setSnackOptions}
             />
           ) : (
-            <BussinessTypeForm
-              thisBussinessType={thisBussinessType}
-              setThisBussinessType={setThisBussinessType}
-              initialBussinessTypeState={initialBussinessTypeState}
+            <BusinessCategoriesForm
+              thisBusinessCategories={thisBusinessCategories}
+              setThisBusinessCategories={setThisBusinessCategories}
+              initialBusinessCategoriesState={initialBusinessCategoriesState}
               setpreview={setPreview}
+              allBussinessType={allBussinessType}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
-              addBussinessType={addBussinessType}
-              updateBussinessType={updateBussinessType}
+              addBusinessCategories={addBusinessCategories}
+              updateBusinessCategories={updateBusinessCategories}
               processing={processing}
               setProcessing={setProcessing}
             />

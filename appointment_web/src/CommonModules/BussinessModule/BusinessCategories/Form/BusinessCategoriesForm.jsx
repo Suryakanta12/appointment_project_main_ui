@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : BussinessType Form
+ * * Section : BusinessCategories Form
  * * Parent : Admin
- * Description : design BussinessType form primary admin with Database
+ * Description : design BusinessCategories form primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -36,16 +36,17 @@ import SaveIcon from "@mui/icons-material/Save";
 /** ------------------ API Declarations ------------------ */
 /** ------------------ Third Party Components ------------ */
 
-export default function BussinessTypeForm(props) {
+export default function BusinessCategoriesForm(props) {
   /** ------------------ Props ------------------------- */
   const {
-    thisBussinessType,
-    setThisBussinessType,
+    thisBusinessCategories,
+    setThisBusinessCategories,
     isEditMode,
-    addBussinessType,
-    updateBussinessType,
+    addBusinessCategories,
+    updateBusinessCategories,
     processing,
     setProcessing,
+    allBussinessType,
   } = props;
   /** ------------------ Initial States -------------------- */
   /** ------------------ useStates ------------------------- */
@@ -53,16 +54,16 @@ export default function BussinessTypeForm(props) {
   /** ------------------ Functions & Events ---------------- */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setThisBussinessType({ ...thisBussinessType, [name]: value });
+    setThisBusinessCategories({ ...thisBusinessCategories, [name]: value });
   };
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     var ischecked = checked ? "Y" : "N";
-    setThisBussinessType({ ...thisBussinessType, [name]: ischecked });
+    setThisBusinessCategories({ ...thisBusinessCategories, [name]: ischecked });
   };
   const handleSubmit = () => {
     setProcessing(true);
-    isEditMode ? updateBussinessType() : addBussinessType();
+    isEditMode ? updateBusinessCategories() : addBusinessCategories();
   };
   return (
     <React.Fragment>
@@ -78,14 +79,37 @@ export default function BussinessTypeForm(props) {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  label="Business Type Name"
+                  select
+                  label="Select Business Type"
                   fullWidth
                   variant="outlined"
-                  name="Business_Type_Name"
-                  value={thisBussinessType.Business_Type_Name}
+                  name="Business_Type_Id"
+                  value={thisBusinessCategories.Business_Type_Id}
+                  onChange={handleInputChange}
+                >
+                  {allBussinessType &&
+                    allBussinessType.length > 0 &&
+                    allBussinessType.map((buss) => (
+                      <MenuItem
+                        value={buss.Business_Type_Id}
+                        key={buss.Business_Type_Id}
+                      >
+                        {buss.Business_Type_Name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  required
+                  label="Business Category Name"
+                  fullWidth
+                  variant="outlined"
+                  name="Business_Category_Name"
+                  value={thisBusinessCategories.Business_Category_Name}
                   onChange={handleInputChange}
                   inputProps={{
-                    maxLength: 50,
+                    maxLength: 100,
                     minLength: 1,
                     title:
                       "length must be numeric, minimum 1 and maximum digits",
@@ -93,21 +117,17 @@ export default function BussinessTypeForm(props) {
                   helperText="Length- Minimum 1, Maximum 50"
                 />
               </Grid>
+
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  select
-                  label="Business_Status"
+                  label="Business Category Short Name"
                   fullWidth
                   variant="outlined"
-                  name="Business_Status"
-                  value={thisBussinessType.Business_Status}
+                  name="Business_Category_Short_Name"
+                  value={thisBusinessCategories.Business_Category_Short_Name}
                   onChange={handleInputChange}
-                >
-                  <MenuItem value="Up Comming">Up Comming</MenuItem>
-                  <MenuItem value="Active">Active</MenuItem>
-                  <MenuItem value="Block">Block</MenuItem>
-                </TextField>
+                />
               </Grid>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
@@ -117,8 +137,8 @@ export default function BussinessTypeForm(props) {
                   multiline
                   rows={4}
                   variant="outlined"
-                  name="Business_Type_Desc"
-                  value={thisBussinessType.Business_Type_Desc}
+                  name="Business_Category_Description"
+                  value={thisBusinessCategories.Business_Category_Description}
                   onChange={handleInputChange}
                   inputProps={{
                     maxLength: 250,
@@ -134,10 +154,10 @@ export default function BussinessTypeForm(props) {
                   control={
                     <Checkbox
                       name="Is_Active"
-                      value={thisBussinessType.Is_Active}
+                      value={thisBusinessCategories.Is_Active}
                       onChange={handleCheckboxChange}
                       checked={
-                        thisBussinessType.Is_Active === "Y" ? true : false
+                        thisBusinessCategories.Is_Active === "Y" ? true : false
                       }
                     />
                   }
