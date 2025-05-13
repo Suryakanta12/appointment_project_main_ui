@@ -22,8 +22,8 @@ import { deleteRecord } from "services/services";
 const Transition = forwardRef((props, ref) => (
   <Slide direction="up" ref={ref} {...props} />
 ));
-export default function UserTypePreview(props) {
-  const userTypeColumns = [
+export default function BussinessTypePreview(props) {
+  const bussinessTypeColumns = [
     {
       field: "actions",
       headerName: "Edit",
@@ -41,12 +41,13 @@ export default function UserTypePreview(props) {
         </Tooltip>
       ),
     },
-    { field: "User_Type_Id", headerName: "ID", minWidth: 100 },
-    { field: "User_Type_Name", headerName: "Name", minWidth: 150 },
-    { field: "User_Type_Desc", headerName: "Description", minWidth: 200 },
-    { field: "Default_Page", headerName: "Default Page", minWidth: 150 },
-    { field: "Is_Member", headerName: "Member", minWidth: 100 },
+    { field: "Business_Type_Id", headerName: "ID", minWidth: 100 },
+    { field: "Business_Type_Name", headerName: "Name", minWidth: 150 },
+    { field: "Business_Type_Desc", headerName: "Description", minWidth: 200 },
+    { field: "Business_Code", headerName: "Business Code", minWidth: 150 },
+    { field: "Business_Status", headerName: "Business Status", minWidth: 100 },
     { field: "Is_Active", headerName: "Active", minWidth: 100 },
+    { field: "Business_Media", headerName: "Media", minWidth: 100 },
     { field: "Added_By", headerName: "Added By", minWidth: 150 },
     { field: "Added_On", headerName: "Added On", minWidth: 150 },
     { field: "Modified_By", headerName: "Modified By", minWidth: 150 },
@@ -56,10 +57,10 @@ export default function UserTypePreview(props) {
     { field: "Is_Deleted", headerName: "Deleted", minWidth: 100 },
   ];
   const {
-    allUserTypes,
-    setAllUserTypes,
+    allBussinessType,
+    setAllBussinessType,
     setPreview,
-    setThisUserTypes,
+    setThisBussinessType,
     setIsEditMode,
     loading,
     setProcessing,
@@ -76,7 +77,6 @@ export default function UserTypePreview(props) {
   const handleSelectionChange = (selectionModel) => {
     setSelectedIDs(selectionModel);
   };
-  // console.log("allUserTypes", allUserTypes);
 
   const handleDelete = () => {
     if (selectedIDs.length === 0) return;
@@ -86,12 +86,11 @@ export default function UserTypePreview(props) {
 
   const handleConfirmDelete = () => {
     setProcessing(true);
-    const deletePromises = pendingDeleteIDs.map((id) =>
-      deleteRecord(`api/v1/usertypes/delete-usertypes/${id}`),
+      const deletePromises = pendingDeleteIDs.map((id) =>
+      deleteRecord(`api/v1/businesstype/delete-businesstypes/${id}`),
     );
-
     Promise.all(deletePromises)
-      .then((responses) => {
+        .then((responses) => {
         const failedDeletes = responses.filter(
           (res) => res?.status !== "success",
         );
@@ -107,10 +106,11 @@ export default function UserTypePreview(props) {
             message: "Selected user types deleted successfully.",
           });
 
-          const updatedRows = allUserTypes.filter(
-            (row) => !pendingDeleteIDs.includes(row.User_Type_Id),
-          );
-          setAllUserTypes(updatedRows);
+          const updatedRows = allBussinessType.filter(
+            (row) => !pendingDeleteIDs.includes(row.Business_Type_Id),
+            );
+           
+          setAllBussinessType(updatedRows);
           setSelectedIDs([]);
         }
       })
@@ -130,7 +130,7 @@ export default function UserTypePreview(props) {
   };
 
   const handleEditClick = (row) => {
-    setThisUserTypes(row); // Set the selected user type
+    setThisBussinessType(row); // Set the selected user type
     setIsEditMode(true); // Enable edit mode
     setPreview(false); // Go back to the form (if applicable)
   };
@@ -157,13 +157,13 @@ export default function UserTypePreview(props) {
           </Box>
         ) : (
           <DataGrid
-            rows={allUserTypes}
-            columns={userTypeColumns}
+            rows={allBussinessType}
+            columns={bussinessTypeColumns}
             checkboxSelection
             disableRowSelectionOnClick
             pagination
             pageSizeOptions={[5, 10, 25]}
-            getRowId={(row) => row.User_Type_Id}
+            getRowId={(row) => row.Business_Type_Id}
             initialState={{
               pagination: { paginationModel: { pageSize: 10, page: 0 } },
             }}
@@ -172,8 +172,8 @@ export default function UserTypePreview(props) {
             slots={{
               toolbar: () => (
                 <CustomTableToolbar
-                  rows={allUserTypes}
-                  columns={userTypeColumns}
+                  rows={allBussinessType}
+                  columns={bussinessTypeColumns}
                   selectedIDs={selectedIDs}
                   handleDelete={handleDelete}
                 />

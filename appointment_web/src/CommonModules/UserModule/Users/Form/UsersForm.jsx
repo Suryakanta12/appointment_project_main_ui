@@ -155,6 +155,7 @@ export default function UsersForm(props) {
           <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
             <TextField
               fullWidth
+              disabled
               label="Email"
               name="Email"
               type="email"
@@ -172,6 +173,7 @@ export default function UsersForm(props) {
           </Grid>
           <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
             <TextField
+              disabled
               fullWidth
               required
               select

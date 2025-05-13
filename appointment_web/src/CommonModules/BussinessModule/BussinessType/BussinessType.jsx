@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : Users
+ * * Section : BussinessType
  * * Parent : Admin
- * Description : design Users primary admin with Database
+ * Description : design BussinessType primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -30,8 +30,8 @@ import {
   Button,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import UsersForm from "./Form/UsersForm.jsx";
-import UsersPreview from "./Preview/UsersPreview.jsx";
+import BussinessTypeForm from "./Form/BussinessTypeForm.jsx";
+import BussinessTypePreview from "./Preview/BussinessTypePreview.jsx";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
   postRecord,
@@ -49,65 +49,39 @@ import AdminHeader from "../../../Template/Dashboards/Components/AdminHeader/Adm
 /** ------------------ Media Imports --------------------- */
 /** ------------------ Style Components ------------------ */
 /** ------------------ API Declarations ------------------ */
-const API_GetAllUsers = "api/v1/users/all-users";
-const API_AddUser = "api/v1/users/add-users";
-const API_UpdateUser = "api/v1/users/update-users/{user_id}";
-const API_GetAllUserTypes = "api/v1/usertypes/all-usertypes";
+const API_GetAllBussinessType = "api/v1/businesstype/all-businesstypes";
+const API_AddBussinessType = "api/v1/businesstype/add-businesstypes";
 
 /** ------------------ Third Party Components ------------ */
 
-export default function Users(props) {
+export default function BussinessType(props) {
   const navigate = useNavigate();
   /** ------------------ Initial States -------------------- */
   const context = useContext(AuthContext);
-  const initialUserState = {
-    User_Id: null,
-    Full_Name: "",
-    Email: "",
-    Phone: "",
-    Alt_Phone: "",
-    Password_Hash: "",
-    User_Type_Id: null,
-    Profile_Image: "",
-    Background_Image: "",
-    Bio: "",
-    Website: "",
-    Social_Links: "",
-    Gender: "",
-    DOB: "",
-    Occupation: "",
-    Company_Name: "",
-    GST_Number: "",
-    Referral_Code: "",
-    Address: "",
-    City: "",
-    State: "",
-    Country: "India",
-    Postal_Code: "",
-    Preferred_Language: "",
-    Is_Verified: 0,
+  const initialBussinessTypeState = {
+    Business_Type_Id: null,
+    Business_Type_Name: "",
+    Business_Type_Desc: "",
+    Business_Code: "",
+    Business_Status: "",
     Is_Active: "N",
-    Is_Deleted: "N",
-    Wallet_Balance: 0,
-    Currency: "",
-    Last_Transaction_Id: "",
-    Payment_Mode: "",
-    Is_Wallet_Enabled: 0,
+    Business_Media: "",
     Added_By: context.state.user.User_Id,
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
   };
-
   /** ------------------ useStates ------------------------- */
   const [routeAccess, setRouteAccess] = useState(
     CheckRouteAccess(window.location.pathname),
   );
-  const [allUsers, setAllUsers] = useState([]);
-  const [allUserTypes, setAllUserTypes] = useState([]);
-  const [thisUsers, setThisUsers] = useState(initialUserState);
+  const [allBussinessType, setAllBussinessType] = useState([]);
+  const [thisBussinessType, setThisBussinessType] = useState(
+    initialBussinessTypeState,
+  );
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [preview, setPreview] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+
   const [snackOpen, setSnackOpen] = useState(false);
   const [snackOptions, setSnackOptions] = useState({
     color: "success",
@@ -116,9 +90,10 @@ export default function Users(props) {
   /** ------------------ useEffects ------------------------ */
   useEffect(() => {
     let componentMounted = true;
-    getRecord(API_GetAllUsers, {}).then((response) => {
+    // console.log();
+    getRecord(API_GetAllBussinessType, {}).then((response) => {
       if (response.status === "success" && componentMounted && preview) {
-        setAllUsers(response.data.data);
+        setAllBussinessType(response.data);
         setLoading(false);
       }
     });
@@ -126,36 +101,9 @@ export default function Users(props) {
       componentMounted = false;
     };
   }, [preview]);
-  useEffect(() => {
-    let componentMounted = true;
-    getRecord(API_GetAllUserTypes, {})
-      .then((response) => {
-        if (response.status === "success") {
-          var typeData = response.data.filter((item) => {
-            return item.User_Type_Id !== 1 && item.Is_Active === "Y";
-          });
-          setAllUserTypes(typeData);
-        }
-      })
-      .catch((err) => {
-        setSnackOptions({
-          color: "error",
-          message: err.response.data.detail,
-        });
-        setSnackOpen(true);
-      });
-    //   .then((response) => {
-    //   if (response.status === "success" && componentMounted && !preview) {
-    //     setAllUserTypes(response.data);
-    //   }
-    // });
-    return () => {
-      componentMounted = false;
-    };
-  }, [preview]);
   /** ------------------ Functions & Events ---------------- */
-  const addUser = () => {
-    postRecord(API_AddUser, thisUsers)
+  const addUserType = () => {
+    postRecord(API_AddBussinessType, thisBussinessType)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({ color: response.color, message: response.message });
@@ -175,31 +123,43 @@ export default function Users(props) {
         setProcessing(false);
       });
   };
+  const updateUserType = () => {
+    const userTypeId = thisBussinessType.Business_Type_Id;
 
-  const updateUser = () => {
-    const userId = thisUsers.User_Id;
-    if (!userId) {
+    if (!userTypeId) {
       setSnackOptions({
         color: "error",
-        message: "Invalid User ID",
+        message: 'Please Check internet connection. Refresh and Try again!',
       });
       setSnackOpen(true);
       return;
     }
 
-    thisUsers.Modified_By = context.state.user.User_Id;
-    thisUsers.Modified_On = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+    // Add metadata
+    thisBussinessType.Modified_By = context.state.user.User_Id;
+    thisBussinessType.Modified_On = moment(new Date()).format(
+      "YYYY-MM-DD HH:mm:ss",
+    );
 
-    const endpoint = `api/v1/users/update-user/${userId}`;
+    // Replace placeholder with actual ID
+    const endpoint = `api/v1/businesstype/update-businesstypes/${userTypeId}`;
 
-    putRecord(endpoint, thisUsers)
+    // Make PUT call
+    putRecord(endpoint, thisBussinessType)
       .then((response) => {
-        setSnackOptions({
-          color: response.data.color,
-          message: response.data.message,
-        });
-        setSnackOpen(true);
+        if (response.status === "success") {
+          setSnackOptions({
+            color: response.data.color,
+            message: response.data.message,
+          });
+        } else {
+          setSnackOptions({
+            color: response.data.color,
+            message: response.data.message,
+          });
+        }
         setProcessing(false);
+        setSnackOpen(true);
         resetAndPreview();
       })
       .catch((err) => {
@@ -211,9 +171,8 @@ export default function Users(props) {
         setProcessing(false);
       });
   };
-
   const resetAndPreview = () => {
-    setThisUsers(initialUserState);
+    setThisBussinessType(initialBussinessTypeState);
     setIsEditMode(false);
     setPreview(true);
     // setProcessing(false);
@@ -227,7 +186,7 @@ export default function Users(props) {
           sx={{ my: 10, minWidth: "76vw !important", minHeight: "70vh" }}
         >
           <Box align="left">
-            <Typography variant="h6"> Users</Typography>
+            <Typography variant="h6"> Bussiness Type</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -255,13 +214,17 @@ export default function Users(props) {
                       color="inherit"
                       onClick={resetAndPreview}
                     >
-                      User
+                      Bussiness Type
                     </Button>
                     <Typography sx={{ color: "text.primary" }}>
                       {preview ? (
-                        "User List"
+                        "Bussiness Type List"
                       ) : (
-                        <>{isEditMode ? "Edit User" : "Add New User"}</>
+                        <>
+                          {isEditMode
+                            ? "Edit Bussiness Type"
+                            : "Add New Bussiness Type"}
+                        </>
                       )}
                     </Typography>
                   </Breadcrumbs>
@@ -283,8 +246,8 @@ export default function Users(props) {
                     <ListIcon />
                   </IconButton>
                 </Tooltip>
-                {/* {!isEditMode && (
-                  <Tooltip title="Add new  User" placement="top">
+                {!isEditMode && (
+                  <Tooltip title="Add new  Bussiness Type" placement="top">
                     <span>
                       <IconButton
                         color="primary"
@@ -295,16 +258,16 @@ export default function Users(props) {
                       </IconButton>
                     </span>
                   </Tooltip>
-                )} */}
+                )}
               </Box>
             </Box>
           </Box>
           {preview ? (
-            <UsersPreview
+            <BussinessTypePreview
               setPreview={setPreview}
-              allUsers={allUsers}
-              setThisUsers={setThisUsers}
-              setAllUsers={setAllUsers}
+              allBussinessType={allBussinessType}
+              setThisBussinessType={setThisBussinessType}
+              setAllBussinessType={setAllBussinessType}
               setIsEditMode={setIsEditMode}
               loading={loading}
               setProcessing={setProcessing}
@@ -315,20 +278,17 @@ export default function Users(props) {
               setSnackOptions={setSnackOptions}
             />
           ) : (
-            <UsersForm
-              thisUsers={thisUsers}
-              setThisUsers={setThisUsers}
-              initialUserState={initialUserState}
+            <BussinessTypeForm
+              thisBussinessType={thisBussinessType}
+              setThisBussinessType={setThisBussinessType}
+              initialBussinessTypeState={initialBussinessTypeState}
               setpreview={setPreview}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
-              addUser={addUser}
-              updateUser={updateUser}
-              allUserTypes={allUserTypes}
+              addUserType={addUserType}
+              updateUserType={updateUserType}
               processing={processing}
               setProcessing={setProcessing}
-              setSnackOpen={setSnackOpen}
-              setSnackOptions={setSnackOptions}
             />
           )}
           <Snackbar
