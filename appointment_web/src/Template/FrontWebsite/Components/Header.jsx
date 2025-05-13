@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -22,6 +22,17 @@ import {
   Tooltip,
   FormControlLabel,
 } from "@mui/material";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import Badge from "@mui/material/Badge";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
+import Collapse from "@mui/material/Collapse";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -30,17 +41,28 @@ import CloseIcon from "@mui/icons-material/Close";
 import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { ThemeContext } from "ContextOrRedux/ThemeProvider.js";
-
-const pages = ["Home", "About", "Our Businesses","News Room", "ContactUs"];
+import { AuthContext } from "ContextOrRedux/AuthContext";
+import { authPostRecord } from "services/services";
+import Snackbar from "SnackBar/Snackbar.jsx";
+const API_Logout = "api/v1/authrouter/logout";
+const pages = ["Home", "About", "Our Businesses", "News Room", "ContactUs"];
 const settings = ["Profile", "Orders", "Logout"];
 
 export default function Header() {
   const themeMode = useContext(ThemeContext);
   const darkMode = themeMode.state.darkMode;
   const navigate = useNavigate();
+  const context = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackOptions, setSnackOptions] = useState({
+    color: "success",
+    message: "Hi",
+  });
+  const openProfile = Boolean(anchorEl);
   const toggleDrawer = (open) => () => {
     setDrawerOpen(open);
   };
@@ -54,7 +76,40 @@ export default function Header() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
+  const handleProfileOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleProfileClose = () => {
+    setAnchorEl(null);
+  };
+  const handleLogout = () => {
+    var tokenData = {
+      token: context.state.token,
+    };
+    authPostRecord(API_Logout, tokenData)
+      .then((response) => {
+        if (response.status === "success") {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+          dispatch({ type: "LOGOUT" });
+        } else {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+        }
+        setSnackOpen(true);
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message: err.response.data.detail,
+        });
+        setSnackOpen(true);
+      });
+  };
   return (
     <AppBar
       position="stick"
@@ -88,7 +143,7 @@ export default function Header() {
             {pages.map((page) => (
               <Button
                 key={page}
-                onClick={() => handleNavigation(page.replace(/\s+/g, ''))}
+                onClick={() => handleNavigation(page.replace(/\s+/g, ""))}
                 sx={{
                   mx: 1,
                   color: darkMode ? "#fff" : "#333",
@@ -119,30 +174,153 @@ export default function Header() {
                 }
               />
             </Tooltip> */}
-            <Box sx={{ mr:2 }}>
-            <Tooltip title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
-          <IconButton
-          color="inherit"
-            onClick={() =>
-              themeMode.dispatch({
-                type: darkMode ? "LIGHTMODE" : "DARKMODE",
-              })
-            }
-          >
-            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
-          </IconButton>
-          </Tooltip>
+          <Box sx={{ mr: 2 }}>
+            <Tooltip
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              <IconButton
+                color="inherit"
+                onClick={() =>
+                  themeMode.dispatch({
+                    type: darkMode ? "LIGHTMODE" : "DARKMODE",
+                  })
+                }
+              >
+                {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+              </IconButton>
+            </Tooltip>
           </Box>
 
           {/* Sign In and Sign Up Buttons */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
-            <Button variant="outlined" color="primary" onClick={() => navigate('/SignIn')}>
-              Sign In
-            </Button>
-            <Button variant="contained" color="primary" onClick={() => navigate('/SignUp')}>
-              Sign Up
-            </Button>
-          </Box>
+          {context.state && context.state.isAuthenticated === false ? (
+            <>
+              <Box sx={{ display: { xs: "none", md: "flex" }, gap: 2 }}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => navigate("/SignIn")}
+                >
+                  Sign In
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => navigate("/SignUp")}
+                >
+                  Sign Up
+                </Button>
+              </Box>
+            </>
+          ) : (
+            <>
+              <IconButton
+                size="large"
+                aria-label="show 4 new mails"
+                color="inherit"
+              >
+                <Badge badgeContent={4} color="error">
+                  <MailIcon color="primary" />
+                </Badge>
+              </IconButton>
+              <IconButton
+                size="large"
+                aria-label="show 17 new notifications"
+                color="inherit"
+              >
+                <Badge badgeContent={17} color="error">
+                  <NotificationsIcon color="primary" />
+                </Badge>
+              </IconButton>
+              <Box sx={{ flexGrow: 0 }}>
+                <IconButton
+                  size="large"
+                  edge="end"
+                  aria-label="account of current user"
+                  aria-haspopup="true"
+                  color="inherit"
+                  onClick={handleProfileOpen}
+                  //   size="small"
+                  //   sx={{ ml: 2 }}
+                  //   aria-controls={openProfile ? 'account-menu' : undefined}
+                  //   aria-expanded={openProfile ? 'true' : undefined}
+                >
+                  <AccountCircle color="primary" />
+                </IconButton>
+                <Menu
+                  anchorEl={anchorEl}
+                  id="account-menu"
+                  open={openProfile}
+                  onClose={handleProfileClose}
+                  onClick={handleProfileClose}
+                  slotProps={{
+                    paper: {
+                      elevation: 0,
+                      sx: {
+                        overflow: "visible",
+                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        mt: 1.5,
+                        "& .MuiAvatar-root": {
+                          width: 32,
+                          height: 32,
+                          ml: -0.5,
+                          mr: 1,
+                        },
+                        "&::before": {
+                          content: '""',
+                          display: "block",
+                          position: "absolute",
+                          top: 0,
+                          right: 14,
+                          width: 10,
+                          height: 10,
+                          bgcolor: "background.paper",
+                          transform: "translateY(-50%) rotate(45deg)",
+                          zIndex: 0,
+                        },
+                      },
+                    },
+                  }}
+                  transformOrigin={{ horizontal: "right", vertical: "top" }}
+                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                >
+                  <MenuItem
+                    onClick={() =>
+                      navigate(
+                        context.state && context.state.isAuthenticated === true
+                          ? context.state.usertype.Default_Page
+                          : "",
+                      )
+                    }
+                  >
+                    <Avatar /> Dashboard
+                  </MenuItem>
+                  <MenuItem onClick={handleProfileClose}>
+                    <Avatar /> Profile
+                  </MenuItem>
+
+                  <Divider />
+                  <MenuItem onClick={handleProfileClose}>
+                    <ListItemIcon>
+                      <PersonAdd fontSize="small" />
+                    </ListItemIcon>
+                    Add another account
+                  </MenuItem>
+                  <MenuItem onClick={handleProfileClose}>
+                    <ListItemIcon>
+                      <Settings fontSize="small" />
+                    </ListItemIcon>
+                    Settings
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
+                      <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </>
+          )}
 
           {/* Mobile Menu Icon */}
           <Box sx={{ display: { xs: "flex", md: "none" } }}>
@@ -183,7 +361,11 @@ export default function Header() {
           <Divider />
           <List>
             {pages.map((page) => (
-              <ListItem button key={page} onClick={() => handleNavigation(page)}>
+              <ListItem
+                button
+                key={page}
+                onClick={() => handleNavigation(page)}
+              >
                 <ListItemText primary={page} />
               </ListItem>
             ))}

@@ -50,6 +50,10 @@ import MyLocationIcon from "@mui/icons-material/MyLocation";
 import WorkIcon from "@mui/icons-material/Work";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
+import { authPostRecord } from "services/services";
+import Snackbar from "SnackBar/Snackbar.jsx";
+import { AuthContext } from "ContextOrRedux/AuthContext";
+const API_Logout = "api/v1/authrouter/logout";
 const drawerWidth = 300;
 const sidebarData = {
   sections: [
@@ -146,6 +150,8 @@ const moduleData = {
 };
 export default function AdminHeader() {
   const navigate = useNavigate();
+  const context = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   const theme = useTheme();
   const themeMode = useContext(ThemeContext);
   const darkMode = themeMode.state.darkMode;
@@ -154,6 +160,11 @@ export default function AdminHeader() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedService, setSelectedService] = useState({});
   const [selectedModules, setSelectedModules] = useState({});
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackOptions, setSnackOptions] = useState({
+    color: "success",
+    message: "Hi",
+  });
   const openProfile = Boolean(anchorEl);
   const handleToggle = (sectionName) => {
     setSelectedService((prevState) => ({
@@ -180,6 +191,34 @@ export default function AdminHeader() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+  const handleLogout = () => {
+    var tokenData = {
+      token: context.state.token,
+    };
+    authPostRecord(API_Logout, tokenData)
+      .then((response) => {
+        if (response.status === "success") {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+          dispatch({ type: "LOGOUT" });
+        } else {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+        }
+        setSnackOpen(true);
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message: err.response.data.detail,
+        });
+        setSnackOpen(true);
+      });
   };
 
   return (
@@ -309,12 +348,15 @@ export default function AdminHeader() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
+                <MenuItem
+                  onClick={() => navigate(context.state.usertype.Default_Page)}
+                >
+                  <Avatar /> Dashboard
+                </MenuItem>
                 <MenuItem onClick={handleProfileClose}>
                   <Avatar /> Profile
                 </MenuItem>
-                <MenuItem onClick={handleProfileClose}>
-                  <Avatar /> My account
-                </MenuItem>
+
                 <Divider />
                 <MenuItem onClick={handleProfileClose}>
                   <ListItemIcon>
@@ -328,7 +370,7 @@ export default function AdminHeader() {
                   </ListItemIcon>
                   Settings
                 </MenuItem>
-                <MenuItem onClick={handleProfileClose}>
+                <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
                   </ListItemIcon>
@@ -522,6 +564,12 @@ export default function AdminHeader() {
             </ListItem>
           ))}
         </List>
+        <Snackbar
+          open={snackOpen}
+          setOpen={setSnackOpen}
+          options={snackOptions}
+          // message={snackOptions.message}
+        />
       </MuiDrawer>
     </React.Fragment>
   );

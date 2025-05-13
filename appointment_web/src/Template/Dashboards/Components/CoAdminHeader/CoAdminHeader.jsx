@@ -47,6 +47,10 @@ import ShareIcon from "@mui/icons-material/Share";
 import NewspaperIcon from "@mui/icons-material/Newspaper";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
+import { authPostRecord } from "services/services";
+import Snackbar from "SnackBar/Snackbar.jsx";
+import { AuthContext } from "ContextOrRedux/AuthContext";
+const API_Logout = "api/v1/authrouter/logout";
 const drawerWidth = 300;
 const sidebarData = {
   sections: [
@@ -131,11 +135,18 @@ export default function CoAdminHeader() {
   const theme = useTheme();
   const navigate = useNavigate();
   const themeMode = useContext(ThemeContext);
+  const context = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   const darkMode = themeMode.state.darkMode;
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [open, setOpen] = React.useState(isMobile ? false : true);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedService, setSelectedService] = useState({});
+  const [snackOpen, setSnackOpen] = useState(false);
+  const [snackOptions, setSnackOptions] = useState({
+    color: "success",
+    message: "Hi",
+  });
   const openProfile = Boolean(anchorEl);
   const handleToggle = (sectionName) => {
     setSelectedService((prevState) => ({
@@ -159,6 +170,34 @@ export default function CoAdminHeader() {
   };
   const handleItemClick = (url) => {
     navigate(url); // Perform navigation to the given URL
+  };
+  const handleLogout = () => {
+    var tokenData = {
+      token: context.state.token,
+    };
+    authPostRecord(API_Logout, tokenData)
+      .then((response) => {
+        if (response.status === "success") {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+          dispatch({ type: "LOGOUT" });
+        } else {
+          setSnackOptions({
+            color: response.color,
+            message: response.message,
+          });
+        }
+        setSnackOpen(true);
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message: err.response.data.detail,
+        });
+        setSnackOpen(true);
+      });
   };
   return (
     <React.Fragment>
@@ -287,12 +326,15 @@ export default function CoAdminHeader() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
+                <MenuItem
+                  onClick={() => navigate(context.state.usertype.Default_Page)}
+                >
+                  <Avatar /> Dashboard
+                </MenuItem>
                 <MenuItem onClick={handleProfileClose}>
                   <Avatar /> Profile
                 </MenuItem>
-                <MenuItem onClick={handleProfileClose}>
-                  <Avatar /> My account
-                </MenuItem>
+
                 <Divider />
                 <MenuItem onClick={handleProfileClose}>
                   <ListItemIcon>
@@ -306,7 +348,7 @@ export default function CoAdminHeader() {
                   </ListItemIcon>
                   Settings
                 </MenuItem>
-                <MenuItem onClick={handleProfileClose}>
+                <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
                     <Logout fontSize="small" />
                   </ListItemIcon>
