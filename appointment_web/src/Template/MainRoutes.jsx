@@ -44,6 +44,7 @@ import LocationMaster from "../CommonModules/LocationModule/LocationMaster/Locat
 import LocationActivePincode from "../CommonModules/LocationModule/LocationActivePincode/LocationActivePincode.jsx";
 import BussinessType from "../CommonModules/BussinessModule/BussinessType/BussinessType.jsx";
 import BusinessCategories from "../CommonModules/BussinessModule/BusinessCategories/BusinessCategories.jsx";
+import BusinessManUsers from '../CommonModules/BussinessModule/BusinessManUsers/BusinessManUsers.jsx'
 
 var hist = createBrowserHistory();
 export default function MainRoutes() {
@@ -67,6 +68,11 @@ export default function MainRoutes() {
             />
           }
         >
+          <Route
+            exact
+            path="/BusinessManUsers"
+            element={<BusinessManUsers />}
+          />
           <Route
             exact
             path="/BusinessCategories"

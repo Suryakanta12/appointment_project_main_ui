@@ -136,7 +136,7 @@ const moduleData = {
     {
       name: "Bussiness Module",
       items: [
-        { name: "Business Man User", url: "/BussinessManUser" },
+        { name: "Business Man User", url: "/BusinessManUsers" },
         { name: "Business Type", url: "/BussinessType" },
         { name: "Business Categories", url: "/BusinessCategories" },
       ],

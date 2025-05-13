@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : BusinessCategories
+ * * Section : BusinessManUsers
  * * Parent : Admin
- * Description : design BusinessCategories primary admin with Database
+ * Description : design BusinessManUsers primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -30,8 +30,8 @@ import {
   Button,
 } from "@mui/material";
 /** ------------------ User Components ------------------- */
-import BusinessCategoriesForm from "./Form/BusinessCategoriesForm.jsx";
-import BusinessCategoriesPreview from "./Preview/BusinessCategoriesPreview.jsx";
+import BusinessManUsersForm from "./Form/BusinessManUsersForm.jsx";
+import BusinessManUsersPreview from "./Preview/BusinessManUsersPreview.jsx";
 import Snackbar from "SnackBar/Snackbar.jsx";
 import {
   postRecord,
@@ -49,27 +49,32 @@ import AdminHeader from "../../../Template/Dashboards/Components/AdminHeader/Adm
 /** ------------------ Media Imports --------------------- */
 /** ------------------ Style Components ------------------ */
 /** ------------------ API Declarations ------------------ */
-const API_GetAllBusinessCategories =
-  "api/v1/businesscategories/all-businesscategories";
-const API_AddBusinessCategories =
-  "api/v1/businesscategories/add-businesscategories";
+const API_GetAllBusinessManUsers =
+  "api/v1/businessmanuser/all-businessmanusers";
+// const API_AddBusinessManUsers =
+//   "api/v1/businesscategories/add-businesscategories";
 const API_GetAllBussinessType = "api/v1/businesstype/all-businesstypes";
+const API_GetAllUsers = "api/v1/users/all-users";
+const API_GetAllUserTypes = "api/v1/usertypes/all-usertypes";
 
 /** ------------------ Third Party Components ------------ */
 
-export default function BusinessCategories(props) {
+export default function BusinessManUsers(props) {
   const navigate = useNavigate();
   /** ------------------ Initial States -------------------- */
   const context = useContext(AuthContext);
-  const initialBusinessCategoriesState = {
-    Business_Category_Id: null,
+  const initialBusinessManUsersState = {
+    Businessman_User_Id: null,
+    User_Id: "",
+    User_Type_Id: "",
     Business_Type_Id: "",
-    Business_Category_Name: "",
-    Business_Category_Short_Name: "",
-    Business_Category_Code: "",
-    Business_Category_Description: "",
+    Brand_Name: "",
+    Business_Type_Name: "",
+    Business_Status: "",
+    Bussiness_Logo: "",
+    Bussiness_Banner: "",
+    Bussiness_Description: "",
     Is_Active: "N",
-    Business_Category_Media: "",
     Added_By: context.state.user.User_Id,
     Added_On: moment(new Date()).format("YYYY-MM-DD HH:mm:ss"),
   };
@@ -77,10 +82,12 @@ export default function BusinessCategories(props) {
   const [routeAccess, setRouteAccess] = useState(
     CheckRouteAccess(window.location.pathname),
   );
-  const [allBusinessCategories, setAllBusinessCategories] = useState([]);
+  const [allBusinessManUsers, setAllBusinessManUsers] = useState([]);
   const [allBussinessType, setAllBussinessType] = useState([]);
-  const [thisBusinessCategories, setThisBusinessCategories] = useState(
-    initialBusinessCategoriesState,
+  const [allUsers, setAllUsers] = useState([]);
+  const [allUserTypes, setAllUserTypes] = useState([]);
+  const [thisBusinessManUsers, setThisBusinessManUsers] = useState(
+    initialBusinessManUsersState,
   );
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -96,9 +103,9 @@ export default function BusinessCategories(props) {
   useEffect(() => {
     let componentMounted = true;
     // console.log();
-    getRecord(API_GetAllBusinessCategories, {}).then((response) => {
+    getRecord(API_GetAllBusinessManUsers, {}).then((response) => {
       if (response.status === "success" && componentMounted && preview) {
-        setAllBusinessCategories(response.data);
+        setAllBusinessManUsers(response.data);
         setLoading(false);
       }
     });
@@ -106,6 +113,41 @@ export default function BusinessCategories(props) {
       componentMounted = false;
     };
   }, [preview]);
+  useEffect(() => {
+    let componentMounted = true;
+    getRecord(API_GetAllUsers, {}).then((response) => {
+      if (response.status === "success" && componentMounted && preview) {
+        setAllUsers(response.data.data);
+        setLoading(false);
+      }
+    });
+    return () => {
+      componentMounted = false;
+    };
+  }, [preview]);
+  useEffect(() => {
+    let componentMounted = true;
+    getRecord(API_GetAllUserTypes, {})
+      .then((response) => {
+        if (response.status === "success" && componentMounted) {
+          var typeData = response.data.filter((item) => {
+            return item.User_Type_Id !== 1 && item.Is_Active === "Y";
+          });
+          setAllUserTypes(typeData);
+        }
+      })
+      .catch((err) => {
+        setSnackOptions({
+          color: "error",
+          message: err.response.data.detail,
+        });
+        setSnackOpen(true);
+      });
+
+    return () => {
+      componentMounted = false;
+    };
+  }, []);
   useEffect(() => {
     let componentMounted = true;
     // console.log();
@@ -119,31 +161,31 @@ export default function BusinessCategories(props) {
     };
   }, [!preview]);
   /** ------------------ Functions & Events ---------------- */
-  const addBusinessCategories = () => {
-    postRecord(API_AddBusinessCategories, thisBusinessCategories)
-      .then((response) => {
-        if (response.status === "success") {
-          setSnackOptions({ color: response.color, message: response.message });
-          resetAndPreview();
-        } else {
-          setSnackOptions({ color: response.color, message: response.message });
-        }
-        setProcessing(false);
-        setSnackOpen(true);
-      })
-      .catch((err) => {
-        setSnackOptions({
-          color: "error",
-          message: err.response.data.detail,
-        });
-        setSnackOpen(true);
-        setProcessing(false);
-      });
-  };
-  const updateBusinessCategories = () => {
-    const businessCategoriesId = thisBusinessCategories.Business_Category_Id;
+  // const addBusinessManUsers = () => {
+  //   postRecord(API_AddBusinessManUsers, thisBusinessManUsers)
+  //     .then((response) => {
+  //       if (response.status === "success") {
+  //         setSnackOptions({ color: response.color, message: response.message });
+  //         resetAndPreview();
+  //       } else {
+  //         setSnackOptions({ color: response.color, message: response.message });
+  //       }
+  //       setProcessing(false);
+  //       setSnackOpen(true);
+  //     })
+  //     .catch((err) => {
+  //       setSnackOptions({
+  //         color: "error",
+  //         message: err.response.data.detail,
+  //       });
+  //       setSnackOpen(true);
+  //       setProcessing(false);
+  //     });
+  // };
+  const updateBusinessManUsers = () => {
+    const businessManUserId = thisBusinessManUsers.Businessman_User_Id;
 
-    if (!businessCategoriesId) {
+    if (!businessManUserId) {
       setSnackOptions({
         color: "error",
         message: "Please Check internet connection. Refresh and Try again!",
@@ -153,16 +195,16 @@ export default function BusinessCategories(props) {
     }
 
     // Add metadata
-    thisBusinessCategories.Modified_By = context.state.user.User_Id;
-    thisBusinessCategories.Modified_On = moment(new Date()).format(
+    thisBusinessManUsers.Modified_By = context.state.user.User_Id;
+    thisBusinessManUsers.Modified_On = moment(new Date()).format(
       "YYYY-MM-DD HH:mm:ss",
     );
 
     // Replace placeholder with actual ID
-    const endpoint = `api/v1/businesstype/update-businesstypes/${businessCategoriesId}`;
+    const endpoint = `api/v1/businessmanuser/update-businessmanusers/${businessManUserId}`;
 
     // Make PUT call
-    putRecord(endpoint, thisBusinessCategories)
+    putRecord(endpoint, thisBusinessManUsers)
       .then((response) => {
         if (response.status === "success") {
           setSnackOptions({
@@ -189,7 +231,7 @@ export default function BusinessCategories(props) {
       });
   };
   const resetAndPreview = () => {
-    setThisBusinessCategories(initialBusinessCategoriesState);
+    setThisBusinessManUsers(initialBusinessManUsersState);
     setIsEditMode(false);
     setPreview(true);
     // setProcessing(false);
@@ -203,7 +245,7 @@ export default function BusinessCategories(props) {
           sx={{ my: 10, minWidth: "76vw !important", minHeight: "70vh" }}
         >
           <Box align="left">
-            <Typography variant="h6"> Business Categories</Typography>
+            <Typography variant="h6"> Business Man Users</Typography>
             <Box
               sx={{
                 display: "flex",
@@ -231,16 +273,16 @@ export default function BusinessCategories(props) {
                       color="inherit"
                       onClick={resetAndPreview}
                     >
-                      Business Categories
+                      Business Man Users
                     </Button>
                     <Typography sx={{ color: "text.primary" }}>
                       {preview ? (
-                        "Business Categories List"
+                        "Business Man Users List"
                       ) : (
                         <>
                           {isEditMode
-                            ? "Edit Business Categories"
-                            : "Add New Business Categories"}
+                            ? "Edit Business Man Users"
+                            : "Add New Business Man Users"}
                         </>
                       )}
                     </Typography>
@@ -263,8 +305,8 @@ export default function BusinessCategories(props) {
                     <ListIcon />
                   </IconButton>
                 </Tooltip>
-                {!isEditMode && (
-                  <Tooltip title="Add new  Business Categories" placement="top">
+                {/* {!isEditMode && (
+                  <Tooltip title="Add new  Business Man Users" placement="top">
                     <span>
                       <IconButton
                         color="primary"
@@ -275,16 +317,16 @@ export default function BusinessCategories(props) {
                       </IconButton>
                     </span>
                   </Tooltip>
-                )}
+                )} */}
               </Box>
             </Box>
           </Box>
           {preview ? (
-            <BusinessCategoriesPreview
+            <BusinessManUsersPreview
               setPreview={setPreview}
-              allBusinessCategories={allBusinessCategories}
-              setThisBusinessCategories={setThisBusinessCategories}
-              setAllBusinessCategories={setAllBusinessCategories}
+              allBusinessManUsers={allBusinessManUsers}
+              setThisBusinessManUsers={setThisBusinessManUsers}
+              setAllBusinessManUsers={setAllBusinessManUsers}
               setIsEditMode={setIsEditMode}
               loading={loading}
               setProcessing={setProcessing}
@@ -295,16 +337,18 @@ export default function BusinessCategories(props) {
               setSnackOptions={setSnackOptions}
             />
           ) : (
-            <BusinessCategoriesForm
-              thisBusinessCategories={thisBusinessCategories}
-              setThisBusinessCategories={setThisBusinessCategories}
-              initialBusinessCategoriesState={initialBusinessCategoriesState}
+            <BusinessManUsersForm
+              thisBusinessManUsers={thisBusinessManUsers}
+              setThisBusinessManUsers={setThisBusinessManUsers}
+              initialBusinessManUsersState={initialBusinessManUsersState}
               setpreview={setPreview}
               allBussinessType={allBussinessType}
+              allUserTypes={allUserTypes}
+              allUsers={allUsers}
               isEditMode={isEditMode}
               setIsEditMode={setIsEditMode}
-              addBusinessCategories={addBusinessCategories}
-              updateBusinessCategories={updateBusinessCategories}
+              // addBusinessManUsers={addBusinessManUsers}
+              updateBusinessManUsers={updateBusinessManUsers}
               processing={processing}
               setProcessing={setProcessing}
             />

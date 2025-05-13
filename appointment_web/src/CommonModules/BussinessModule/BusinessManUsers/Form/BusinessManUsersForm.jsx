@@ -1,9 +1,9 @@
 /**
  * * Project Name : Appointment
  * * Layer Name : Database
- * * Section : BussinessType Form
+ * * Section : BusinessManUsers Form
  * * Parent : Admin
- * Description : design BussinessType form primary admin with Database
+ * Description : design BusinessManUsers form primary admin with Database
  * Author: Suryakanta sahu
  * Date Created: 10-May-2025
  *
@@ -36,16 +36,19 @@ import SaveIcon from "@mui/icons-material/Save";
 /** ------------------ API Declarations ------------------ */
 /** ------------------ Third Party Components ------------ */
 
-export default function BussinessTypeForm(props) {
+export default function BusinessManUsersForm(props) {
   /** ------------------ Props ------------------------- */
   const {
-    thisBussinessType,
-    setThisBussinessType,
+    thisBusinessManUsers,
+    setThisBusinessManUsers,
     isEditMode,
-    addBussinessType,
-    updateBussinessType,
+    // addBusinessManUsers,
+    updateBusinessManUsers,
     processing,
     setProcessing,
+    allBussinessType,
+    allUserTypes,
+    allUsers,
   } = props;
   /** ------------------ Initial States -------------------- */
   /** ------------------ useStates ------------------------- */
@@ -53,16 +56,16 @@ export default function BussinessTypeForm(props) {
   /** ------------------ Functions & Events ---------------- */
   const handleInputChange = (event) => {
     const { name, value } = event.target;
-    setThisBussinessType({ ...thisBussinessType, [name]: value });
+    setThisBusinessManUsers({ ...thisBusinessManUsers, [name]: value });
   };
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     var ischecked = checked ? "Y" : "N";
-    setThisBussinessType({ ...thisBussinessType, [name]: ischecked });
+    setThisBusinessManUsers({ ...thisBusinessManUsers, [name]: ischecked });
   };
   const handleSubmit = () => {
     setProcessing(true);
-    isEditMode ? updateBussinessType() : addBussinessType();
+    isEditMode ? updateBusinessManUsers() : "";
   };
   return (
     <React.Fragment>
@@ -75,17 +78,85 @@ export default function BussinessTypeForm(props) {
             }}
           >
             <Grid container spacing={3}>
+              <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  required
+                  select
+                  label="User Type Id"
+                  type="number"
+                  name="User_Type_Id"
+                  value={thisBusinessManUsers.User_Type_Id}
+                  onChange={handleInputChange}
+                >
+                  {allUserTypes &&
+                    allUserTypes.length > 0 &&
+                    allUserTypes.map((userType) => (
+                      <MenuItem
+                        value={userType.User_Type_Id}
+                        key={userType.User_Type_Id}
+                      >
+                        {userType.User_Type_Name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={6} md={6} lg={6} xl={6}>
+                <TextField
+                  disabled
+                  fullWidth
+                  required
+                  select
+                  label="select User Id"
+                  type="number"
+                  name="User_Id"
+                  value={thisBusinessManUsers.User_Id}
+                  onChange={handleInputChange}
+                >
+                  {allUsers &&
+                    allUsers.length > 0 &&
+                    allUsers.map((user) => (
+                      <MenuItem value={user.User_Id} key={user.User_Id}>
+                        {user.Full_Name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <TextField
                   required
-                  label="Business Type Name"
+                  select
+                  label="Select Business Type"
                   fullWidth
                   variant="outlined"
-                  name="Business_Type_Name"
-                  value={thisBussinessType.Business_Type_Name}
+                  name="Business_Type_Id"
+                  value={thisBusinessManUsers.Business_Type_Id}
+                  onChange={handleInputChange}
+                >
+                  {allBussinessType &&
+                    allBussinessType.length > 0 &&
+                    allBussinessType.map((buss) => (
+                      <MenuItem
+                        value={buss.Business_Type_Id}
+                        key={buss.Business_Type_Id}
+                      >
+                        {buss.Business_Type_Name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  required
+                  label="Brand Name"
+                  fullWidth
+                  variant="outlined"
+                  name="Brand_Name"
+                  value={thisBusinessManUsers.Brand_Name}
                   onChange={handleInputChange}
                   inputProps={{
-                    maxLength: 50,
+                    maxLength: 100,
                     minLength: 1,
                     title:
                       "length must be numeric, minimum 1 and maximum digits",
@@ -97,14 +168,37 @@ export default function BussinessTypeForm(props) {
                 <TextField
                   required
                   select
+                  label="Select Business Type Name"
+                  fullWidth
+                  variant="outlined"
+                  name="Business_Type_Name"
+                  value={thisBusinessManUsers.Business_Type_Name}
+                  onChange={handleInputChange}
+                >
+                  {allBussinessType &&
+                    allBussinessType.length > 0 &&
+                    allBussinessType.map((buss) => (
+                      <MenuItem
+                        value={buss.Business_Type_Name}
+                        key={buss.Business_Type_Id}
+                      >
+                        {buss.Business_Type_Name}
+                      </MenuItem>
+                    ))}
+                </TextField>
+              </Grid>
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
+                <TextField
+                  required
+                  select
                   label="Business Status"
                   fullWidth
                   variant="outlined"
                   name="Business_Status"
-                  value={thisBussinessType.Business_Status}
+                  value={thisBusinessManUsers.Business_Status}
                   onChange={handleInputChange}
                 >
-                  <MenuItem value="Up Comming">Up Comming</MenuItem>
+                  <MenuItem value="In Active">In Active</MenuItem>
                   <MenuItem value="Active">Active</MenuItem>
                   <MenuItem value="Block">Block</MenuItem>
                 </TextField>
@@ -117,8 +211,8 @@ export default function BussinessTypeForm(props) {
                   multiline
                   rows={4}
                   variant="outlined"
-                  name="Business_Type_Desc"
-                  value={thisBussinessType.Business_Type_Desc}
+                  name="Bussiness_Description"
+                  value={thisBusinessManUsers.Bussiness_Description}
                   onChange={handleInputChange}
                   inputProps={{
                     maxLength: 250,
@@ -129,15 +223,16 @@ export default function BussinessTypeForm(props) {
                   helperText="Length- Minimum 1, Maximum 250"
                 />
               </Grid>
+
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6}>
                 <FormControlLabel
                   control={
                     <Checkbox
                       name="Is_Active"
-                      value={thisBussinessType.Is_Active}
+                      value={thisBusinessManUsers.Is_Active}
                       onChange={handleCheckboxChange}
                       checked={
-                        thisBussinessType.Is_Active === "Y" ? true : false
+                        thisBusinessManUsers.Is_Active === "Y" ? true : false
                       }
                     />
                   }
